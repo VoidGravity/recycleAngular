@@ -1,0 +1,110 @@
+<section class="recycling-container">
+    <div class="floating-bubbles">
+        <div class="bubble x1"></div>
+        <div class="bubble x2"></div>
+        <div class="bubble x3"></div>
+        <div class="bubble x4"></div>
+    </div>
+    
+    <div class="login-page">
+        <div class="form">
+            <div class="form-header">
+                <div class="recycle-logo">
+                    <div class="recycle-icon"></div>
+                </div>
+                <h2>Welcome to Recycle Hub</h2>
+                <p class="message">Already registered? <a routerLink="/login">Sign In</a></p>
+
+            </div>
+            
+            <form #registerForm="ngForm" class="register-form" (ngSubmit)="onSubmit()">
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input name="firstName" type="text" [(ngModel)]="user.firstName" placeholder="First Name" required minlength="3" #firstName="ngModel"/>
+                        @if(firstName?.dirty && firstName?.invalid){
+                            <div class="alert alert-simple alert-warning">
+                                <i class="start-icon fas fa-leaf"></i>
+                                Minimum 3 characters
+                            </div>
+                        }
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input name="lastName" type="text" [(ngModel)]="user.lastName" placeholder="Last Name" required minlength="3" #lastName="ngModel"/>
+                        @if(lastName?.dirty && lastName?.invalid){
+                            <div class="alert alert-simple alert-warning">
+                                <i class="start-icon fas fa-leaf"></i>
+                                Minimum 3 characters
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input name="email" [(ngModel)]="user.email" type="email" placeholder="Email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" #email="ngModel"/>
+                        @if(email?.dirty && email?.invalid){
+                            <div class="alert alert-simple alert-warning">
+                                <i class="start-icon fas fa-leaf"></i>
+                                Valid email required
+                            </div>
+                        }
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-phone"></i>
+                        <input name="phone" type="number" [(ngModel)]="user.phone" placeholder="Phone number" required pattern="[0-9]{10}" #phone="ngModel"/>
+                        @if(phone?.dirty && phone?.invalid){
+                            <div class="alert alert-simple alert-warning">
+                                <i class="start-icon fas fa-leaf"></i>
+                                10-digit number required
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input name="address" type="text" [(ngModel)]="user.address" placeholder="Address" required minlength="5" #address="ngModel"/>
+                        @if(address?.dirty && address?.invalid){
+                            <div class="alert alert-simple alert-warning">
+                                <i class="start-icon fas fa-leaf"></i>
+                                Minimum 5 characters
+                            </div>
+                        }
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input name="date" [(ngModel)]="user.date" type="date" required #date="ngModel"/>
+                        @if(date?.dirty && date?.invalid){
+                            <div class="alert alert-simple alert-warning">
+                                <i class="start-icon fas fa-leaf"></i>
+                                Date required
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="input-group full-width">
+                    <i class="fas fa-lock"></i>
+                    <input name="password" [(ngModel)]="user.password" type="password" placeholder="Password" required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" #password="ngModel"/>
+                    @if(password?.dirty && password?.invalid){
+                        <div class="alert alert-simple alert-warning">
+                            <i class="start-icon fas fa-leaf"></i>
+                            8+ chars with uppercase, lowercase & number
+                        </div>
+                    }
+                </div>
+
+                <button type="submit" [disabled]="registerForm.invalid">
+                    <i class="fas fa-seedling"></i> Create Eco Account
+                </button>
+            </form>
+        </div>
+    </div>
+</section>

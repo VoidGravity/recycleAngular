@@ -1,0 +1,57 @@
+<section class="recycling-container">
+    <div class="floating-bubbles">
+        <div class="bubble x1"></div>
+        <div class="bubble x2"></div>
+        <div class="bubble x3"></div>
+        <div class="bubble x4"></div>
+    </div>
+    
+    <div class="login-page">
+        <div class="form">
+            <div class="form-header">
+                <div class="recycle-logo">
+                    <div class="recycle-icon"></div>
+                </div>
+                <h2>Welcome back</h2>
+                <p class="message">You don't have an Account? <a routerLink="/register">Register</a></p>
+
+            </div>
+            
+            <form #loginForm="ngForm" class="register-form" (ngSubmit)="onSubmit()">
+
+                <div class="form-row">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input name="email" [(ngModel)]="user.email" type="email" placeholder="Email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" #email="ngModel"/>
+                        @if(email?.dirty && email?.invalid){
+                            <div class="alert alert-simple alert-warning">
+                                <i class="start-icon fas fa-leaf"></i>
+                                Valid email required
+                            </div>
+                        }
+                        <div *ngIf="emal.invalid" class="alert alert-simple alert-warning">
+                            hellow world 
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="input-group full-width">
+                    <i class="fas fa-lock"></i>
+                    <input name="password" [(ngModel)]="user.password" type="password" placeholder="Password" required minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" #password="ngModel"/>
+                    @if(password?.dirty && password?.invalid){
+                        <div class="alert alert-simple alert-warning">
+                            <i class="start-icon fas fa-leaf"></i>
+                            8+ chars with uppercase, lowercase & number
+                        </div>
+                    }
+                </div>
+
+                <button type="submit" [disabled]="loginForm.invalid">
+                    <i class="fas fa-seedling"></i> Login
+                </button>
+            </form>
+        </div>
+    </div>
+</section>

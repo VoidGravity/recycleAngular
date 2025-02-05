@@ -1,0 +1,217 @@
+:root {
+    --eco-green: #2ECC71;
+    --earth-blue: #3498DB;
+    --deep-forest: #27AE60;
+    --nature-yellow: #F1C40F;
+    --white: #FFFFFF;
+    --light-gray: #f8f9fa;
+}
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.recycling-container {
+    background: linear-gradient(-45deg, var(--deep-forest), var(--eco-green), var(--earth-blue), var(--nature-yellow));
+    background-size: 400% 400%;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.floating-bubbles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    animation: float 20s infinite linear;
+}
+
+@keyframes float {
+    0% { transform: translateY(100vh) scale(0.5); }
+    100% { transform: translateY(-100vh) scale(1); }
+}
+
+.bubble.x1 { animation-delay: 0s; left: 10%; width: 40px; height: 40px; }
+.bubble.x2 { animation-delay: 2s; left: 30%; width: 60px; height: 60px; }
+.bubble.x3 { animation-delay: 4s; left: 70%; width: 80px; height: 80px; }
+.bubble.x4 { animation-delay: 6s; left: 90%; width: 30px; height: 30px; }
+
+.login-page {
+    width: 100%;
+    max-width: 800px;
+    padding: 20px;
+}
+
+.form {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+}
+
+.form:hover {
+    transform: translateY(-5px);
+}
+
+.form-header {
+    text-align: center;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--eco-green);
+    transition: color 0.3s ease;
+}
+
+input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 2px solid var(--light-gray);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    /* background: var(--light-gray); */
+    background:rgba(96, 150, 147, 0.4)
+
+}
+
+input:focus {
+    border-color: var(--earth-blue);
+    background: var(--white);
+    box-shadow: 0 0 15px rgba(52, 152, 219, 0.2);
+}
+
+input:focus + i {
+    color: var(--earth-blue);
+}
+
+button {
+    display: block;
+    margin: 20px auto 0;
+    background: linear-gradient(45deg, var(--deep-forest), var(--eco-green));
+    padding: 18px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+button:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(39, 174, 96, 0.4);
+}
+
+button:not(:disabled)::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: rgba(255,255,255,0.1);
+    transform: rotate(45deg);
+    animation: shine 1.5s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
+
+.recycle-logo {
+    width: 80px;
+    height: 80px;
+    background: var(--eco-green);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    position: relative;
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.recycle-icon {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 3px solid var(--white);
+    border-radius: 50%;
+}
+
+.recycle-icon::after {
+    content: '♻';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--white);
+    font-size: 24px;
+}
+
+@media (max-width: 768px) {
+    .form {
+        padding: 25px;
+        margin: 15px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    input {
+        padding: 12px 12px 12px 40px;
+    }
+}
