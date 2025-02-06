@@ -7,5 +7,7 @@ export const CollectionActions = createActionGroup({
     'create collection': props<{ data: unknown }>(),
     'update collection': props<{ data: unknown }>(),
     'update collection status' : props<{data: unknown}>(),
+
   }
 });
+ 
