@@ -13,5 +13,13 @@ import { FormsModule } from '@angular/forms';
 })
 export class CollectionComponent {
   today: string = new Date().toISOString().split('T')[0];
+  wasteItems: any[] = [{}];
+  addWasteItem(): void {
+    this.wasteItems.push({});
+  }
+  removeWasteItem(index: number): void {
+    this.wasteItems.splice(index, 1);
+  }
+  
 
 }
