@@ -66,6 +66,17 @@ export class AuthService {
 
     return localStorage.getItem("users");
   }
+  updateUser(user: any) {
+    const currentUser = JSON.parse(localStorage.getItem("current_user")||'{}')
+    currentUser.email=user.email;
+    currentUser.phone=user.phone;
+    currentUser.address=user.address;
+    currentUser.password=user.password;
+    console.log("this is the current user " ,currentUser)
+    // localStorage.setItem("current_user",currentUser);
+
+    
+  }
 
 
   getCurrentUser(): any {

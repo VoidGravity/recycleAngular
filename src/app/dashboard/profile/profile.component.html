@@ -1,0 +1,72 @@
+<form #userProfile="ngForm" (ngSubmit)="onSubmit()">
+
+    <div id="webcrumbs">
+        <div class="w-full max-w-[1200px] bg-white mx-auto">
+          
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6">
+            <div class="md:col-span-8 space-y-6">
+              
+              <!-- sqdqsdqsssssssssssssss -->
+              <div class="bg-white rounded-xl border p-6">
+                <h2 class="text-lg font-bold mb-4">Profile Settings</h2>
+                <div class="space-y-4">
+                  <div class="flex flex-col gap-2">
+                    <label class="font-medium">Email</label>
+                    <input
+                      type="email"
+                      name="email"
+                      [(ngModel)]="userDetails.email"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                      placeholder="Enter your email"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label class="font-medium">Phone Number</label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      [(ngModel)]="userDetails.phone"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                      placeholder="Enter your phone number"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label class="font-medium">Password</label>
+                    <input
+                      type="text"
+                      name="password"
+                      [(ngModel)]="userDetails.password"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                      placeholder="Enter your phone Password"
+                    />
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label class="font-medium">Address</label>
+                    <textarea
+                    name="adress"
+                    [(ngModel)]="userDetails.address"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                      placeholder="Enter your address"
+                      rows="3"
+                    ></textarea>
+                  </div>
+                  <div class="flex">
+                      <button type="submit"
+                        class="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition"
+                      >
+                        Save Changes
+                      </button>
+                      <a                 class="w-full cancell text-white py-2 rounded-lg hover:bg-primary-600 transition"
+                      routerLink="/home">Cancel</a>
+    
+                  </div>
+                </div>
+              </div>
+              <!-- sqdqsdssssssssssss -->
+              
+            </div>
+            
+          </div>
+        </div>
+      </div>
+</form>

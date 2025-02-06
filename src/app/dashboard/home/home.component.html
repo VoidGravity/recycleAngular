@@ -56,7 +56,9 @@
               <button
                 class="flex items-center gap-2 p-2 hover:bg-neutral-50 rounded-lg transition"
               >
-                <span class="material-symbols-outlined">settings</span> Settings
+                <span class="material-symbols-outlined">settings</span>
+                <a routerLink="/home/profile">Settings</a>
+                
               </button>
               <button
                 class="flex items-center gap-2 p-2 hover:bg-neutral-50 rounded-lg transition"
@@ -99,6 +101,7 @@
             <p class="mt-2 text-primary-600">Active Collections</p>
           </div>
         </div>
+        <router-outlet></router-outlet>
         <div class="bg-white rounded-xl border p-6">
           <h2 class="text-lg font-bold mb-4">Recent Collections</h2>
           <div class="space-y-4">
@@ -160,3 +163,4 @@
     </div>
   </div>
 </div>
+
