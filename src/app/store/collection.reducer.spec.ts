@@ -1,6 +1,6 @@
-import { reducer, initialState } from './test.reducer';
+import { reducer, initialState } from './collection.reducer';
 
-describe('Test Reducer', () => {
+describe('Collection Reducer', () => {
   describe('an unknown action', () => {
     it('should return the previous state', () => {
       const action = {} as any;

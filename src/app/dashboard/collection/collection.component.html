@@ -74,13 +74,13 @@
                           class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
                           placeholder="Enter estimated weight"
                           required
-                          min="0"
+                          min="1"
                           ngModel
                           #wasteWeight="ngModel"
                         />
                         <div *ngIf="wasteWeight.invalid && wasteWeight.touched" class="text-red-500 text-sm">
                           <div *ngIf="wasteWeight.errors?.['required']">Weight is required.</div>
-                          <div *ngIf="wasteWeight.errors?.['min']">Weight cannot be negative.</div>
+                          <div *ngIf="wasteWeight.errors?.['min']">Weight cannot be less than 1kg.</div>
                         </div>
                       </div>
                       <button type="button" class="text-red-500 mt-2" (click)="removeWasteItem(i)">Remove</button>

@@ -1,12 +1,16 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
+import { CollectionRequest } from '../model/collection-request.model';
 
 export const CollectionActions = createActionGroup({
   source: 'Collection',
   events: {
     
-    'create collection': props<{ data: unknown }>(),
-    'update collection': props<{ data: unknown }>(),
-    'update collection status' : props<{data: unknown}>(),
+    'create collection': props<{ collection: CollectionRequest }>(),
+    'update collection': props<{ collection: CollectionRequest }>(),
+    'update collection status' : props<{collection: CollectionRequest}>(),
+    'remove Collection': props<{ collectionid: string }>(),
+    'Load Collections From Storage': props<{ collections: CollectionRequest[] }>()
+
 
   }
 });
