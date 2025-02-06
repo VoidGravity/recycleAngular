@@ -88,6 +88,15 @@ export class AuthService {
     localStorage.removeItem("current_user");
     console.log("User logged out");
   }
+  deleteAccount(){
+    const currentUser = JSON.parse(localStorage.getItem("current_user") || "{}")
+    const users = JSON.parse(localStorage.getItem("users") || "{}")
+    const newUsers = users.filter((u : any)=>u.email!==currentUser.email)
+    // console.log("here is a list of the new users  : ",newUsers)
+    // console.log("here is a list of the old users  : ",users)
+    localStorage.removeItem("current_user");
+    localStorage.setItem("users",JSON.stringify(newUsers))
+  }
 
 
 }

@@ -25,4 +25,7 @@ export class ProfileComponent {
     console.log(this.userDetails)
     this.authService.updateUser(this.userDetails)
   }
+  deleteAccount(){
+    this.authService.deleteAccount()
+  }
 }

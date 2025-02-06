@@ -614,6 +614,9 @@ video {
     cursor: pointer; 
     margin-left: 10px;
 }
+.redButton{
+    background-color: red;
+}
 
 #webcrumbs .focus\:outline-none:focus {
   outline: 2px solid transparent;
