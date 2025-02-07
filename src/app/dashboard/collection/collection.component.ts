@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { CollectionRequest } from '../../model/collection-request.model';
 import { Store } from '@ngrx/store';
-import { selectAllCollections } from '../../store/collection.selectors';
+import { selectAllCollections, selectPendingCollections } from '../../store/collection.selectors';
 import { CollectionActions } from '../../store/collection.actions';
 import { cloneDeep } from 'lodash';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-collection',
@@ -65,10 +66,16 @@ export class CollectionComponent {
   //   this.store.dispatch(CollectionActions.createCollection({collection: this.newCollection}));
   // }
   createCollection(): void {
-    // cloneDeep
     const clonedCollection = cloneDeep(this.newCollection);
     clonedCollection.id = this.generateId();
-    this.store.dispatch(CollectionActions.createCollection({ collection: clonedCollection }));
+
+    this.store.select(selectPendingCollections).pipe(take(1)).subscribe(pendingCollections => {
+      if (pendingCollections.length < 3) {
+        this.store.dispatch(CollectionActions.createCollection({ collection: clonedCollection }));
+      } else {
+        alert("You can only have a maximum of 3 pending collections.");
+      }
+    });
   }
   
 }

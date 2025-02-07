@@ -12,3 +12,7 @@ export const selectCollectionById = (id: string) => createSelector(
   selectCollectionState,
   (state: State) => state.collectionRequests.find(request => request.id === id)
 );
+export const selectPendingCollections = createSelector(
+    selectAllCollections,
+    collections => collections.filter(c => c.status === 'en attente')
+  );
