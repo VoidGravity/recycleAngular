@@ -6,6 +6,7 @@ import { CollectionRequest } from '../../model/collection-request.model';
 import { Store } from '@ngrx/store';
 import { selectAllCollections } from '../../store/collection.selectors';
 import { CollectionActions } from '../../store/collection.actions';
+import { cloneDeep } from 'lodash';
 
 @Component({
   selector: 'app-collection',
@@ -26,7 +27,6 @@ export class CollectionComponent {
     additionalNotes: '',
     status: 'en attente'
   };
-
   today: string = new Date().toISOString().split('T')[0];
   collection$: Observable<CollectionRequest[]>;
 
@@ -57,9 +57,18 @@ export class CollectionComponent {
     );
   }
 
+  // createCollection(): void {
+  //   const newCollectionCopy = { ...this.newCollection, id: this.generateId() };
+
+  //   // this.newCollection.id = this.generateId();
+  //   console.log(this.newCollection);
+  //   this.store.dispatch(CollectionActions.createCollection({collection: this.newCollection}));
+  // }
   createCollection(): void {
-    this.newCollection.id = this.generateId();
-    console.log(this.newCollection);
-    this.store.dispatch(CollectionActions.createCollection({collection: this.newCollection}));
+    // cloneDeep
+    const clonedCollection = cloneDeep(this.newCollection);
+    clonedCollection.id = this.generateId();
+    this.store.dispatch(CollectionActions.createCollection({ collection: clonedCollection }));
   }
+  
 }

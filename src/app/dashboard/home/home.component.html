@@ -103,30 +103,32 @@
         </div>
         <router-outlet></router-outlet>
         <div class="bg-white rounded-xl border p-6">
-          <h2 class="text-lg font-bold mb-4">Collections</h2>
-          <!-- {{collection$}} -->
-          <div class="space-y-4">
-            <div
-              class="flex items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition"
-            >
-              <div class="flex items-center gap-4">
-                <span
-                  class="material-symbols-outlined p-2 bg-primary-100 text-primary-600 rounded-lg"
-                >
-                  recycling
-                </span>
-                <div>
-                  <p class="font-medium">Plastic Collection</p>
-                  <p class="text-sm text-neutral-600">5kg - In Progress</p>
-                </div>
-              </div>
-              <span
-                class="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm"
-                >Pending</span
+            <h2 class="text-lg font-bold mb-4">Collections</h2>
+            <div class="space-y-4">
+              <div
+                *ngFor="let collection of collection$ | async"
+                class="flex items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition"
               >
+                <div class="flex items-center gap-4">
+                  <span
+                    class="material-symbols-outlined p-2 bg-primary-100 text-primary-600 rounded-lg"
+                  >
+                    recycling
+                  </span>
+                  <div>
+                    <p class="font-medium">{{ collection.wasteItems[0]?.type | titlecase }} Collection</p>
+                    <p class="text-sm text-neutral-600">{{ collection.totalWeight }}kg - {{ collection.status | titlecase }}</p>
+                  </div>
+                </div>
+                <span
+                  class="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm"
+                >
+                  {{ collection.status | titlecase }}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+          
       </div>
       <div class="md:col-span-4 space-y-6">
         <div class="bg-white rounded-xl border p-6">
