@@ -66,15 +66,23 @@ export class CollectionComponent {
   //   this.store.dispatch(CollectionActions.createCollection({collection: this.newCollection}));
   // }
   createCollection(): void {
-    const clonedCollection = cloneDeep(this.newCollection);
-    clonedCollection.id = this.generateId();
-
-    this.store.select(selectPendingCollections).pipe(take(1)).subscribe(pendingCollections => {
-      if (pendingCollections.length < 3) {
-        this.store.dispatch(CollectionActions.createCollection({ collection: clonedCollection }));
-      } else {
-        alert("You can only have a maximum of 3 pending collections.");
+    const collectionToCreate = { ...this.newCollection, id: this.generateId() };
+  
+    this.store.select(selectPendingCollections).pipe(take(1)).subscribe(pending => {
+      const pendingCount = pending.length;
+      const pendingTotalWeight = pending.reduce((sum, col) => sum + col.totalWeight, 0);
+  
+      if (pendingCount >= 3) {
+        alert("You can only have 3 pending collections.");
+        return;
       }
+      
+      if (pendingTotalWeight + collectionToCreate.totalWeight > 10) {
+        alert("The total weight of pending collections cannot exceed 10kg.");
+        return;
+      }
+  
+      this.store.dispatch(CollectionActions.createCollection({ collection: collectionToCreate }));
     });
   }
   
