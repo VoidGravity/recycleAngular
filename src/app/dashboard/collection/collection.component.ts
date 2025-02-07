@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { CollectionRequest } from '../../model/collection-request.model';
 import { Store } from '@ngrx/store';
 import { selectAllCollections } from '../../store/collection.selectors';
+import { CollectionActions } from '../../store/collection.actions';
 
 @Component({
   selector: 'app-collection',
@@ -59,6 +60,6 @@ export class CollectionComponent {
   createCollection(): void {
     this.newCollection.id = this.generateId();
     console.log(this.newCollection);
-    // this.store.dispatch(CollectionActions.createCollection({collection: this.newCollection}));
+    this.store.dispatch(CollectionActions.createCollection({collection: this.newCollection}));
   }
 }
