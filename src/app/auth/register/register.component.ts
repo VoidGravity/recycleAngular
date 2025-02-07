@@ -21,7 +21,8 @@ export class RegisterComponent {
     password : "",
     phone : "",
     date : "",
-    address : ""
+    address : "",
+    role : "individuel"
   }
   private authService = inject(AuthService)
 

@@ -4,6 +4,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class AuthService {
+  ngOnInit(): void {
+  }
   constructor() { 
 
     if (!localStorage.getItem("users")) {
@@ -15,7 +17,8 @@ export class AuthService {
           password : "AZERazer1234@",
           phone : "1234567891",
           date : "09/12/2024",
-          address : "casablanca"
+          address : "agadir",
+          role : "collector"
         },
         {
           firstName : "collector2",
@@ -24,7 +27,9 @@ export class AuthService {
           password : "AZERazer1234@",
           phone : "1234567892",
           date : "09/12/2025",
-          address : "rabat"
+          address : "rabat",
+          role : "collector"
+
         }
       ];
 
