@@ -8,8 +8,8 @@ export interface WasteItem {
   
   export interface CollectionRequest {
     id: string;
-    userId: string;
-    wasteItems: WasteItem[]; 
+    // userId: string;
+    wasteItems: [{ type: '', weight: 0 }],
     totalWeight: number; 
     collectionAddress: string;
     collectionDate: string;

@@ -1,12 +1,12 @@
 <div id="webcrumbs">
-    <div class="w-full max-w-[1200px] bg-white mx-auto">
-      <form #collectionForm="ngForm" novalidate>
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6">
-          <div class="md:col-span-8 space-y-6">
-            <div class="bg-white rounded-xl border p-6">
-              <h2 class="text-lg font-bold mb-4">New Collection Request</h2>
-              <div class="space-y-4">
-                <!-- <div class="flex flex-col gap-2">
+  <div class="w-full max-w-[1200px] bg-white mx-auto">
+    <form #collectionForm="ngForm" novalidate (ngSubmit)="createCollection()">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6">
+        <div class="md:col-span-8 space-y-6">
+          <div class="bg-white rounded-xl border p-6">
+            <h2 class="text-lg font-bold mb-4">New Collection Request</h2>
+            <div class="space-y-4">
+              <!-- <div class="flex flex-col gap-2">
                   <label class="font-medium" for="materialType">Type of Material</label>
                   <select
                     id="materialType"
@@ -43,135 +43,185 @@
                     <div *ngIf="estimatedWeight.errors?.['min']">Weight cannot be negative.</div>
                   </div>
                 </div> -->
-                <div class="flex flex-col gap-2">
-                    <h3 class="text-lg font-bold mb-4">Waste Items</h3>
-                    <div *ngFor="let item of wasteItems; let i = index" class="border p-4 rounded-lg mb-4">
-                      <div class="flex flex-col gap-2">
-                        <label class="font-medium" for="wasteType-{{i}}">Waste Type</label>
-                        <select
-                          id="wasteType-{{i}}"
-                          name="wasteType-{{i}}"
-                          class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                          required
-                          ngModel
-                          #wasteType="ngModel">
-                          <option value="">Select waste type</option>
-                          <option value="plastic">Plastic</option>
-                          <option value="paper">Paper</option>
-                          <option value="glass">Glass</option>
-                          <option value="metal">Metal</option>
-                        </select>
-                        <div *ngIf="wasteType.invalid && wasteType.touched" class="text-red-500 text-sm">
-                          Waste type is required.
-                        </div>
-                      </div>
-                      <div class="flex flex-col gap-2">
-                        <label class="font-medium" for="wasteWeight-{{i}}">Estimated Weight (kg)</label>
-                        <input
-                          id="wasteWeight-{{i}}"
-                          name="wasteWeight-{{i}}"
-                          type="number"
-                          class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                          placeholder="Enter estimated weight"
-                          required
-                          min="1"
-                          ngModel
-                          #wasteWeight="ngModel"
-                        />
-                        <div *ngIf="wasteWeight.invalid && wasteWeight.touched" class="text-red-500 text-sm">
-                          <div *ngIf="wasteWeight.errors?.['required']">Weight is required.</div>
-                          <div *ngIf="wasteWeight.errors?.['min']">Weight cannot be less than 1kg.</div>
-                        </div>
-                      </div>
-                      <button type="button" class="text-red-500 mt-2" (click)="removeWasteItem(i)">Remove</button>
-                    </div>
-                    <button
-                      type="button"
-                      class="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition"
-                      (click)="addWasteItem()"
-                    >
-                      + Add Waste Item
-                    </button>
-                  </div>
-                <div class="flex flex-col gap-2">
-                  <label class="font-medium" for="pickupAddress">Pickup Address</label>
-                  <textarea
-                    id="pickupAddress"
-                    name="pickupAddress"
-                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                    placeholder="Enter pickup address"
-                    rows="3"
-                    required
-                    ngModel
-                    #pickupAddress="ngModel"
-                  ></textarea>
-                  <div *ngIf="pickupAddress.invalid && pickupAddress.touched" class="text-red-500 text-sm">
-                    Pickup address is required.
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2">
-                  <label class="font-medium" for="pickupDate">Preferred Pickup Date</label>
-                  <input
-                    id="pickupDate"
-                    name="pickupDate"
-                    type="date"
-                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                    required
-                    ngModel
-                    [min]="today"
-                    #pickupDate="ngModel"
-                  />
-                  <div *ngIf="pickupDate.invalid && pickupDate.touched" class="text-red-500 text-sm">
-                    <div *ngIf="pickupDate.errors?.['required']">Pickup date is required.</div>
-                    <div *ngIf="pickupDate.errors?.['min']">Date cannot be in the past.</div>
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2">
-                  <label class="font-medium" for="pickupTime">Créneau horaire souhaité (entre 09h00 et 18h00)</label>
-                  <input
-                    id="pickupTime"
-                    name="pickupTime"
-                    type="time"
-                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                    required
-                    pattern="^(0[9]|1[0-7]):[0-5][0-9]$|^18:00$"
-                    ngModel
-                    #pickupTime="ngModel"
-                  />
-                  <div *ngIf="pickupTime.invalid && pickupTime.touched" class="text-red-500 text-sm">
-                    <div *ngIf="pickupTime.errors?.['required']">
-                      Please select a time between 09h00 and 18h00.
-                    </div>
-                    <div *ngIf="pickupTime.errors?.['pattern']">
-                      Time must be between 09h00 and 18h00.
-                    </div>
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2">
-                  <label class="font-medium" for="additionalNotes">Additional Notes</label>
-                  <textarea
-                    id="additionalNotes"
-                    name="additionalNotes"
-                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                    placeholder="Any special instructions or notes"
-                    rows="3"
-                    ngModel
-                    #additionalNotes="ngModel"
-                  ></textarea>
-                </div>
-                
-                <button
-                  type="submit"
-                  class="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition"
-                  [disabled]="collectionForm.invalid"
+              <div class="flex flex-col gap-2">
+                <h3 class="text-lg font-bold mb-4">Waste Items</h3>
+                <div
+                  *ngFor="let item of newCollection.wasteItems; let i = index"
+                  class="border p-4 rounded-lg mb-4"
                 >
-                  Submit Request
+                  <div class="flex flex-col gap-2">
+                    <label class="font-medium" [for]="'wasteType-' + i"
+                      >Waste Type</label
+                    >
+                    <select
+                      [id]="'wasteType-' + i"
+                      [(ngModel)]="item.type"
+                      name="wasteType-{{ i }}"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                      required
+                      #wasteType="ngModel"
+                    >
+                      <option value="">Select waste type</option>
+                      <option value="plastic">Plastic</option>
+                      <option value="paper">Paper</option>
+                      <option value="glass">Glass</option>
+                      <option value="metal">Metal</option>
+                    </select>
+                    <div
+                      *ngIf="wasteType.invalid && wasteType.touched"
+                      class="text-red-500 text-sm"
+                    >
+                      Waste type is required.
+                    </div>
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label class="font-medium" [for]="'wasteWeight-' + i"
+                      >Estimated Weight (kg)</label
+                    >
+                    <input
+                      [id]="'wasteWeight-' + i"
+                      [(ngModel)]="item.weight"
+                      (ngModelChange)="updateTotalWeight()"
+                      name="wasteWeight-{{ i }}"
+                      type="number"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                      placeholder="Enter estimated weight"
+                      required
+                      min="1"
+                      #wasteWeight="ngModel"
+                    />
+                    <div
+                      *ngIf="wasteWeight.invalid && wasteWeight.touched"
+                      class="text-red-500 text-sm"
+                    >
+                      <div *ngIf="wasteWeight.errors?.['required']">
+                        Weight is required.
+                      </div>
+                      <div *ngIf="wasteWeight.errors?.['min']">
+                        Weight cannot be less than 1kg.
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="text-red-500 mt-2"
+                    (click)="removeWasteItem(i)"
+                    [disabled]="newCollection.wasteItems.length === 1"
+                  >
+                    Remove
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  class="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition"
+                  (click)="addWasteItem()"
+                >
+                  + Add Waste Item
                 </button>
               </div>
+              <div class="flex flex-col gap-2">
+                <label class="font-medium" for="pickupAddress"
+                  >Pickup Address</label
+                >
+                <textarea
+                  [(ngModel)]="newCollection.collectionAddress"
+                  id="pickupAddress"
+                  name="pickupAddress"
+                  class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  placeholder="Enter pickup address"
+                  rows="3"
+                  required
+                  ngModel
+                  #pickupAddress="ngModel"
+                ></textarea>
+                <div
+                  *ngIf="pickupAddress.invalid && pickupAddress.touched"
+                  class="text-red-500 text-sm"
+                >
+                  Pickup address is required.
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label class="font-medium" for="pickupDate"
+                  >Preferred Pickup Date</label
+                >
+                <input
+                  [(ngModel)]="newCollection.collectionDate"
+                  id="pickupDate"
+                  name="pickupDate"
+                  type="date"
+                  class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  required
+                  ngModel
+                  [min]="today"
+                  #pickupDate="ngModel"
+                />
+                <div
+                  *ngIf="pickupDate.invalid && pickupDate.touched"
+                  class="text-red-500 text-sm"
+                >
+                  <div *ngIf="pickupDate.errors?.['required']">
+                    Pickup date is required.
+                  </div>
+                  <div *ngIf="pickupDate.errors?.['min']">
+                    Date cannot be in the past.
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label class="font-medium" for="pickupTime"
+                  >Créneau horaire souhaité (entre 09h00 et 18h00)</label
+                >
+                <input
+                  [(ngModel)]="newCollection.collectionTime"
+                  id="pickupTime"
+                  name="pickupTime"
+                  type="time"
+                  class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  required
+                  pattern="^(0[9]|1[0-7]):[0-5][0-9]$|^18:00$"
+                  ngModel
+                  #pickupTime="ngModel"
+                />
+                <div
+                  *ngIf="pickupTime.invalid && pickupTime.touched"
+                  class="text-red-500 text-sm"
+                >
+                  <div *ngIf="pickupTime.errors?.['required']">
+                    Please select a time between 09h00 and 18h00.
+                  </div>
+                  <div *ngIf="pickupTime.errors?.['pattern']">
+                    Time must be between 09h00 and 18h00.
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <label class="font-medium" for="additionalNotes"
+                  >Additional Notes</label
+                >
+                <textarea
+                  [(ngModel)]="newCollection.additionalNotes"
+                  id="additionalNotes"
+                  name="additionalNotes"
+                  class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                  placeholder="Any special instructions or notes"
+                  rows="3"
+                  ngModel
+                  #additionalNotes="ngModel"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition"
+                [disabled]="collectionForm.invalid"
+              >
+                Submit Request
+              </button>
             </div>
           </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
-  
+</div>
