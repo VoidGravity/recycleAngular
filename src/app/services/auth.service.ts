@@ -4,8 +4,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class AuthService {
-  ngOnInit(): void {
-  }
+  // ngOnInit(): void {
+  // }
   constructor() { 
 
     if (!localStorage.getItem("users")) {

@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { Observable } from 'rxjs';
 import { CollectionRequest } from '../../model/collection-request.model';
@@ -17,11 +17,29 @@ import { CommonModule } from '@angular/common';
 
 })
 
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   collection$: Observable<CollectionRequest[]>;
 
+  role: string = '';
   constructor(private store: Store) {
     this.collection$ = store.select(selectAllCollections);
+  }
+
+  ngOnInit(): void {
+    const userString = localStorage.getItem('user');
+    if (userString) {
+      const user = JSON.parse(userString);
+      this.role = user.role;
+    }
+  }
+  editCollection(collection:CollectionRequest){
+
+  }
+  removeCollection(CollectionId:string){
+
+  }
+  updateStatus(collection:CollectionRequest){
+
   }
 
 
