@@ -63,7 +63,7 @@
               <button
                 class="flex items-center gap-2 p-2 hover:bg-neutral-50 rounded-lg transition"
               >
-                <span class="material-symbols-outlined">logout</span> Logout
+                <span  class="material-symbols-outlined">logout</span> <a (click)="logout()">Logout</a>
               </button>
             </div>
           </div>
@@ -140,26 +140,22 @@
                 class="flex items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition"
               >
                 <div class="flex items-center gap-4">
-                  <span
-                    class="material-symbols-outlined p-2 bg-primary-100 text-primary-600 rounded-lg"
-                  >
+                  <span class="material-symbols-outlined p-2 bg-primary-100 text-primary-600 rounded-lg">
                     recycling
                   </span>
                   <div>
                     <p class="font-medium">Collection</p>
                     <p class="text-sm text-neutral-600">
-                      {{ collection.totalWeight }}kg - {{ collection.status | titlecase }}
+                      {{ collection.totalWeight }}kg - {{ collection.collectionDate| titlecase }}
                     </p>
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
-                  <span
-                    class="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm"
-                  >
+                  <span class="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">
                     {{ collection.status | titlecase }}
                   </span>
-                  <!-- <div *ngIf="role === 'collecteur'" class="flex gap-2"> -->
-                  <div class="flex gap-2">
+                  <!-- <div *ngIf="role === 'individuel' || (role === 'collecteur' && collection.status === 'en attente')" class="flex gap-2"> -->
+                  <div  class="flex gap-2">
                     <button
                       class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm"
                       (click)="editCollection(collection)"
@@ -168,36 +164,111 @@
                     </button>
                     <button
                       class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm"
-                      (click)="removeCollection(collection.id)"
+                      (click)="removeCollection(collection.id, collection.status)"
                     >
                       Remove
                     </button>
-                    <button
-                      class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
-                      (click)="updateStatus(collection)"
-                    >
-                      Update Status
-                    </button>
                   </div>
-                </div>
+                    <!-- <pre>{{ collection.status | json }}</pre> -->
+
+                    <div *ngIf=" role === 'collector' && ['occupee', 'en attente', 'en cours'].includes(collection.status.trim().toLowerCase())" class="flex gap-2">
+                        <!-- hello world -->
+                        {{role}}
+                    <div  class="flex gap-2">
+                        <!-- Hellow 2 -->
+                        <button
+                        class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
+                        (click)="updateStatus(collection)"
+                        >
+                        Update Status
+                        </button>
+                    </div>
+                    </div>
+
               </div>
             </div>
           </div>
   
-          <div *ngIf="editModalVisible" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+          <!-- Edit Collection Modal -->
+          <div *ngIf="editModalVisible && collectionToEdit" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
             <div class="bg-white rounded-lg p-6 w-full max-w-lg">
               <h3 class="text-lg font-bold mb-4">Edit Collection</h3>
               <form #editForm="ngForm" (ngSubmit)="submitEdit()">
+                <!-- Waste Items Editing Section (editable for everyone) -->
+                <div *ngFor="let item of collectionToEdit.wasteItems; let i = index" class="border p-4 rounded-lg mb-4">
+                  <div class="flex flex-col gap-2">
+                    <label class="font-medium" [for]="'editWasteType-' + i">Waste Type</label>
+                    <select
+                      [id]="'editWasteType-' + i"
+                      name="editWasteType-{{ i }}"
+                      [(ngModel)]="collectionToEdit.wasteItems[i].type"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                      required>
+                      <option value="">Select waste type</option>
+                      <option value="plastic">Plastic</option>
+                      <option value="paper">Paper</option>
+                      <option value="glass">Glass</option>
+                      <option value="metal">Metal</option>
+                    </select>
+                  </div>
+                  <div class="flex flex-col gap-2">
+                    <label class="font-medium" [for]="'editWasteWeight-' + i">Waste Weight (kg)</label>
+                    <input
+                      [id]="'editWasteWeight-' + i"
+                      name="editWasteWeight-{{ i }}"
+                      type="number"
+                      [(ngModel)]="collectionToEdit.wasteItems[i].weight"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                      placeholder="Enter estimated weight"
+                      required
+                      min="1" />
+                  </div>
+                </div>
+              
+                <!-- Other Fields -->
                 <div class="flex flex-col gap-2">
                   <label class="font-medium" for="editAddress">Pickup Address</label>
                   <textarea
                     id="editAddress"
                     name="editAddress"
-                    [(ngModel)]="collectionToEdit!.collectionAddress"
+                    [(ngModel)]="collectionToEdit.collectionAddress"
                     class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
                     rows="3"
                     required
-                  ></textarea>
+                    [disabled]="role === 'collector'">
+                  </textarea>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label class="font-medium" for="editDate">Preferred Pickup Date</label>
+                  <input
+                    id="editDate"
+                    name="editDate"
+                    type="date"
+                    [(ngModel)]="collectionToEdit.collectionDate"
+                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                    required
+                    [disabled]="role === 'collector'" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label class="font-medium" for="editTime">Preferred Pickup Time</label>
+                  <input
+                    id="editTime"
+                    name="editTime"
+                    type="time"
+                    [(ngModel)]="collectionToEdit.collectionTime"
+                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                    required
+                    [disabled]="role === 'collector'" />
+                </div>
+                <div class="flex flex-col gap-2">
+                  <label class="font-medium" for="editNotes">Additional Notes</label>
+                  <textarea
+                    id="editNotes"
+                    name="editNotes"
+                    [(ngModel)]="collectionToEdit.additionalNotes"
+                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
+                    rows="3">
+                  </textarea>
                 </div>
                 <button type="submit" class="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition mt-4">
                   Save Changes
@@ -206,10 +277,12 @@
                   Cancel
                 </button>
               </form>
+              
             </div>
           </div>
   
-          <div *ngIf="updateStatusModalVisible" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
+          <!-- Update Status Modal (Collector Only) -->
+          <div *ngIf="updateStatusModalVisible && collectionToUpdate" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
             <div class="bg-white rounded-lg p-6 w-full max-w-lg">
               <h3 class="text-lg font-bold mb-4">Update Collection Status</h3>
               <form #statusForm="ngForm" (ngSubmit)="submitStatusUpdate()">
@@ -218,7 +291,7 @@
                   <select
                     id="newStatus"
                     name="newStatus"
-                    [(ngModel)]="collectionToUpdate!.status"
+                    [(ngModel)]="collectionToUpdate.status"
                     required
                     class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
                   >
@@ -229,6 +302,7 @@
                     <option value="rejetee">Rejetée</option>
                   </select>
                 </div>
+                <!-- Optionally, include other fields for updating status -->
                 <button type="submit" class="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition mt-4">
                   Update Status
                 </button>
