@@ -15,7 +15,7 @@ export class CollectionService {
   public getCollectionRequests(): any[] {
     const storedData = localStorage.getItem('storeData');
     const storeData = storedData ? JSON.parse(storedData) : {};
-    return storeData.collectionRequests || []; // Return collectionRequests if found
+    return storeData.collectionRequests || []; 
   }
   public  getStoreData(): any {
     const storedData = localStorage.getItem('storeData');
@@ -23,12 +23,10 @@ export class CollectionService {
   }
 
 
-  // Save the state to localStorage
   public saveStoreData(data: any): void {
     localStorage.setItem('storeData', JSON.stringify(data));
   }
 
-  // Calculate points based on the collection
   public calculatePoints(collection: any): number {
     let totalPoints = 0;
     collection.wasteItems.forEach((item: any) => {
@@ -38,31 +36,25 @@ export class CollectionService {
     return totalPoints;
   }
 
-  // In CollectionService
   public addPointsAfterValidation(collection: any): void {
     const storeData = this.getStoreData();
     const pointsToAdd = this.calculatePoints(collection);
 
-    // Initialize userPoints if it doesn't exist
     if (!storeData.userPoints) {
       storeData.userPoints = {};
     }
 
-    // Add points to user's existing points or initialize with new points
     if (storeData.userPoints[collection.userId]) {
       storeData.userPoints[collection.userId] += pointsToAdd;
     } else {
       storeData.userPoints[collection.userId] = pointsToAdd;
     }
 
-    // Save the updated state back to localStorage
     this.saveStoreData(storeData);
   }
 
-  // Convert points to a voucher
   public convertPointsToVoucher(userId: string): void {
     const storeData = this.getStoreData();
-    // Access the points directly since userPoints is an object mapping user IDs to points.
     const points = storeData.userPoints[userId] || 0;
     let voucherValue = 0;
   
@@ -76,7 +68,6 @@ export class CollectionService {
   
     if (voucherValue > 0) {
       console.log(`You have converted ${points} points into a voucher worth ${voucherValue} Dh.`);
-      // Deduct points based on the conversion scheme:
       if (points >= 500) {
         storeData.userPoints[userId] -= 500;
       } else if (points >= 200) {

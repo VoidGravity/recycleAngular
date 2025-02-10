@@ -58,13 +58,7 @@ export class CollectionComponent {
     );
   }
 
-  // createCollection(): void {
-  //   const newCollectionCopy = { ...this.newCollection, id: this.generateId() };
 
-  //   // this.newCollection.id = this.generateId();
-  //   console.log(this.newCollection);
-  //   this.store.dispatch(CollectionActions.createCollection({collection: this.newCollection}));
-  // }
   createCollection(): void {
     const collectionToCreate = { ...this.newCollection, id: this.generateId() };
   

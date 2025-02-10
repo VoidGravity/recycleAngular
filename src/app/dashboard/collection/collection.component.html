@@ -8,43 +8,7 @@
           <div class="bg-white rounded-xl border p-6">
             <h2 class="text-lg font-bold mb-4">New Collection Request</h2>
             <div class="space-y-4">
-              <!-- <div class="flex flex-col gap-2">
-                  <label class="font-medium" for="materialType">Type of Material</label>
-                  <select
-                    id="materialType"
-                    name="materialType"
-                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                    required
-                    ngModel
-                    #materialType="ngModel">
-                    <option value="">Select material type</option>
-                    <option value="plastic">Plastic</option>
-                    <option value="paper">Paper</option>
-                    <option value="glass">Glass</option>
-                    <option value="metal">Metal</option>
-                  </select>
-                  <div *ngIf="materialType.invalid && materialType.touched" class="text-red-500 text-sm">
-                    Material type is required.
-                  </div>
-                </div>
-                <div class="flex flex-col gap-2">
-                  <label class="font-medium" for="estimatedWeight">Estimated Weight (kg)</label>
-                  <input
-                    id="estimatedWeight"
-                    name="estimatedWeight"
-                    type="number"
-                    class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none"
-                    placeholder="Enter estimated weight"
-                    required
-                    min="0"
-                    ngModel
-                    #estimatedWeight="ngModel"
-                  />
-                  <div *ngIf="estimatedWeight.invalid && estimatedWeight.touched" class="text-red-500 text-sm">
-                    <div *ngIf="estimatedWeight.errors?.['required']">Estimated weight is required.</div>
-                    <div *ngIf="estimatedWeight.errors?.['min']">Weight cannot be negative.</div>
-                  </div>
-                </div> -->
+             
               <div class="flex flex-col gap-2">
                 <h3 class="text-lg font-bold mb-4">Waste Items</h3>
                 <div

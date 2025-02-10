@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
 import { map, take } from 'rxjs/operators';
 import { PointsActions } from '../../store/points.actions';
 import { CollectionService } from '../../services/collection.service';
-import { cloneDeep } from 'lodash'; // if using lodash
+import { cloneDeep } from 'lodash'; 
 
 @Component({
   selector: 'app-home',
@@ -24,8 +24,6 @@ import { cloneDeep } from 'lodash'; // if using lodash
 })
 export class HomeComponent implements OnInit {
   collection$: Observable<CollectionRequest[]>;
-  // Remove any duplicate local property if you're using store observable:
-  // But if you want a local copy for initial load:
   collectionRequests: CollectionRequest[] = [];
   
   role: string = '';
@@ -46,41 +44,20 @@ export class HomeComponent implements OnInit {
     this.points$ = new BehaviorSubject<number>(0);
   }
 
-  // ngOnInit(): void {
-  //   const userString = localStorage.getItem('current_user');
-  //   if (userString) {
-  //     const user = JSON.parse(userString);
-  //     this.role = user.role;
-  //     this.currentUserId = user.id;
-  //   }
-
-  //   // Load collections from localStorage
-  //   const storedCollections: CollectionRequest[] = JSON.parse(localStorage.getItem('collections') || '[]');
-  //   if (storedCollections.length > 0) {
-  //     // Dispatch action to load these into the store
-  //     this.store.dispatch(CollectionActions.loadCollectionsFromStorage({ collections: storedCollections }));
-  //   }
-
-  //   // Also update points from localStorage using your service
-  //   const storeData = this.collectionService.getStoreData();
-  //   const userPoints = storeData.userPoints ? storeData.userPoints[this.currentUserId] : 0;
-  //   this.points$.next(userPoints || 0);
-  // }
+ 
   ngOnInit(): void {
     const userString = localStorage.getItem('current_user');
     if (userString) {
       const user = JSON.parse(userString);
       this.role = user.role;
       this.currentUserId = user.id;
-      this.userAddress = user.address; // Assuming 'address' is stored in user data
+      this.userAddress = user.address; 
     }
   
-    // Select collections from the store and filter by user's address
     this.collection$ = this.store.select(selectAllCollections).pipe(
       map((collections: CollectionRequest[]) => collections.filter(c => c.collectionAddress === this.userAddress))
     );
   
-    // Update points from localStorage
     const storeData = this.collectionService.getStoreData();
     const userPoints = storeData.userPoints ? storeData.userPoints[this.currentUserId] : 0;
     this.points$.next(userPoints || 0);
@@ -92,8 +69,7 @@ export class HomeComponent implements OnInit {
       alert('Collectors can only edit pending requests.');
       return;
     }
-    // Deep clone the collection so nested objects are mutable
-    this.collectionToEdit = cloneDeep(collection); // or use JSON.parse(JSON.stringify(collection))
+    this.collectionToEdit = cloneDeep(collection);
     this.editModalVisible = true;
   }
 
@@ -118,7 +94,6 @@ export class HomeComponent implements OnInit {
       alert('This request is validated and cannot be updated.');
       return;
     }
-    // Deep clone to allow changes in the nested objects
     this.collectionToUpdate = cloneDeep(collection);
     this.updateStatusModalVisible = true;
   }
@@ -166,17 +141,14 @@ export class HomeComponent implements OnInit {
     const voucherValue = this.getVoucherValue(pointsToDeduct);
 
     if (currentPoints >= pointsToDeduct && voucherValue > 0) {
-      // Deduct points manually
       const newPoints = currentPoints - pointsToDeduct;
       this.points$.next(newPoints);
 
-      // Update localStorage for persistence
       let storeData = this.collectionService.getStoreData();
       if (!storeData.userPoints) storeData.userPoints = {};
       storeData.userPoints[this.currentUserId] = newPoints;
       localStorage.setItem('storeData', JSON.stringify(storeData));
 
-      // Accumulate converted amount instead of replacing
       this.convertedAmount += voucherValue;
 
       alert(`Successfully converted ${pointsToDeduct} points to a ${voucherValue} Dh voucher!`);
@@ -190,7 +162,7 @@ export class HomeComponent implements OnInit {
       case 100: return 50;
       case 200: return 120;
       case 500: return 350;
-      default: return 0; // Prevent invalid conversions
+      default: return 0; 
     }
   }
 }

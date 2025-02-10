@@ -87,34 +87,7 @@
         </div>
         <router-outlet></router-outlet>
         
-        <!-- <div class="bg-white rounded-xl border p-6">
-            <h2 class="text-lg font-bold mb-4">Collections</h2>
-            <div class="space-y-4">
-              <div
-                *ngFor="let collection of collection$ | async"
-                class="flex items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition"
-                >
-                <div class="flex items-center gap-4">
-                  <span
-                    class="material-symbols-outlined p-2 bg-primary-100 text-primary-600 rounded-lg"
-                  >
-                    recycling
-                  </span>
-                  <div>
-                    <p class="font-medium"> Collection</p>
-                    this needs to be commented fach nsalli : <p class="font-medium">{{ collection.wasteItems[0]?.type | titlecase }} Collection</p>
-                    <p class="text-sm text-neutral-600">{{ collection.totalWeight }}kg - {{ collection.status | titlecase }}</p>
-                  </div>
-                </div>
-                <span
-                  class="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm"
-                >
-                  {{ collection.status | titlecase }}
-                </span>
-              </div>
-            </div>
-          </div> -->
-
+        
           <div *ngFor="let collection of collectionRequests">
   <div class="collection-item">
     <h4>Collection ID: {{ collection.id }}</h4>
@@ -137,21 +110,17 @@
 
 <div id="webcrumbs" class="py-4">
     <div class="w-full max-w-[1200px] mx-auto">
-      <!-- Navigation (omitted for brevity) -->
       
       <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-4">
         
-        <!-- Main Content -->
         <div class="md:col-span-8 space-y-6">
           
-          <!-- Collections Card -->
           <div class="bg-white rounded-xl border p-6 shadow-sm">
             <h2 class="text-lg font-bold mb-4">Collections</h2>
             <div *ngIf="collection$ | async as collections">
               <div class="grid grid-cols-1 gap-4">
                 <div *ngFor="let collection of collections" class="flex flex-col md:flex-row items-start justify-between p-4 border rounded-lg hover:bg-neutral-50 transition">
                   
-                  <!-- Collection Details -->
                   <div class="flex flex-col space-y-2">
                     <p class="font-medium text-base">ID: <span class="font-bold">{{ collection.id }}</span></p>
                     <p class="text-sm text-gray-600">Total Weight: {{ collection.totalWeight }}kg</p>
@@ -177,7 +146,6 @@
                     </div>
                   </div>
                   
-                  <!-- Action Buttons -->
                   <div class="flex flex-col space-y-2 mt-4 md:mt-0">
                     <button class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm" (click)="editCollection(collection)">
                       Edit
@@ -197,46 +165,11 @@
             </div>
           </div>
     
-          <!-- Points Section -->
-          <div *ngIf="points$ | async as points" class="bg-white rounded-xl border p-6 shadow-sm">
-            <h3 class="text-lg font-bold mb-4">Your Current Points</h3>
-            <p class="text-2xl font-bold text-primary-600">{{ points }} points</p>
-          </div>
-    
-          <!-- Points Conversion Section (for particuliers) -->
-          <div class="bg-white rounded-xl border p-6 shadow-sm">
-            <h3 class="text-lg font-bold mb-4">Convert Points to Vouchers</h3>
-            <select [(ngModel)]="selectedVoucher" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500">
-              <option value="">Select a voucher</option>
-              <option value="100">100 points = 50 Dh voucher</option>
-              <option value="200">200 points = 120 Dh voucher</option>
-              <option value="500">500 points = 350 Dh voucher</option>
-            </select>
-            <button (click)="convertPoints()" 
-                    class="mt-4 w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600"
-                    [disabled]="!selectedVoucher">
-              Convert Points
-            </button>
-          </div>
+          
+          
           
         </div>
         
-        <!-- Sidebar / Quick Actions -->
-        <div class="md:col-span-4 space-y-6">
-          <div class="bg-white rounded-xl border p-6 shadow-sm">
-            <h2 class="text-lg font-bold mb-4">Quick Actions</h2>
-            <div class="grid grid-cols-2 gap-4">
-              <button class="p-4 border rounded-lg hover:bg-neutral-50 transition text-center" title="New Request">
-                <span class="material-symbols-outlined mb-2">add_circle</span>
-                <p routerLink="/home/collection" class="text-sm">New Request</p>
-              </button>
-              <button class="p-4 border rounded-lg hover:bg-neutral-50 transition text-center" title="History">
-                <span class="material-symbols-outlined mb-2">history</span>
-                <p class="text-sm">History</p>
-              </button>
-            </div>
-          </div>
-        </div>
         
       </div>
     </div>
@@ -244,12 +177,10 @@
   
   
   
-          <!-- Edit Collection Modal -->
           <div *ngIf="editModalVisible && collectionToEdit" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
             <div class="bg-white rounded-lg p-6 w-full max-w-lg">
               <h3 class="text-lg font-bold mb-4">Edit Collection</h3>
               <form #editForm="ngForm" (ngSubmit)="submitEdit()">
-                <!-- Waste Items Editing Section (editable for everyone) -->
                 <div *ngFor="let item of collectionToEdit.wasteItems; let i = index" class="border p-4 rounded-lg mb-4">
                   <div class="flex flex-col gap-2">
                     <label class="font-medium" [for]="'editWasteType-' + i">Waste Type</label>
@@ -280,7 +211,6 @@
                   </div>
                 </div>
               
-                <!-- Other Fields -->
                 <div class="flex flex-col gap-2">
                   <label class="font-medium" for="editAddress">Pickup Address</label>
                   <textarea
@@ -357,7 +287,6 @@
                     <option value="rejetee">Rejetée</option>
                   </select>
                 </div>
-                <!-- Optionally, include other fields for updating status -->
                 <button type="submit" class="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition mt-4">
                   Update Status
                 </button>

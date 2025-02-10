@@ -8,7 +8,7 @@ export const CollectionActions = createActionGroup({
     'update collection': props<{ collection: CollectionRequest }>(),
     'update collection status': props<{ collection: CollectionRequest }>(),
     'remove collection': props<{ collectionid: string }>(),
-    'load collections from storage': props<{ collections: CollectionRequest[] }>(), // Correct action name
+    'load collections from storage': props<{ collections: CollectionRequest[] }>(), 
     'awardPoints': props<{ userId: string; points: number }>(),
   }
 });
