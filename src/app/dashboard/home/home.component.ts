@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { Observable, BehaviorSubject } from 'rxjs'; // Import BehaviorSubject
+import { Observable, BehaviorSubject } from 'rxjs';
 import { CollectionRequest } from '../../model/collection-request.model';
 import { Store } from '@ngrx/store';
 import { selectAllCollections } from '../../store/collection.selectors';
@@ -10,67 +10,65 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { take } from 'rxjs/operators';
 import { PointsActions } from '../../store/points.actions';
-import { CollectionService } from '../../services/collection.service'; // Import CollectionService
+import { CollectionService } from '../../services/collection.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [RouterLink, RouterOutlet, CommonModule, FormsModule],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+  styleUrls: ['./home.component.css'],
   encapsulation: ViewEncapsulation.None
 })
 export class HomeComponent implements OnInit {
-  collection$: Observable<CollectionRequest[]>; // For state management (ngrx)
-  collectionRequests: CollectionRequest[] = [];  // To hold data from localStorage (initial data)
+  // Use the store observable for collections
+  collection$: Observable<CollectionRequest[]>;
+  collectionRequests: CollectionRequest[] = [];
+
   role: string = '';
+  currentUserId: string = '';
+
+  // Modal properties
   editModalVisible: boolean = false;
   collectionToEdit: CollectionRequest | null = null;
   updateStatusModalVisible: boolean = false;
   collectionToUpdate: CollectionRequest | null = null;
-  authService = inject(AuthService);
-  currentUserId: string = '';
-  
-  points$: BehaviorSubject<number>; 
+
+  authService = AuthService; // using inject or via constructor injection as desired
+
+  // Points management
+  points$: BehaviorSubject<number>;
   selectedVoucher: string = '';
 
-  private pointSystem: { [key: string]: number } = {
-    'Plastique': 2,
-    'Verre': 1,
-    'Papier': 1,
-    'Métal': 5
-  };
-
-  constructor(private store: Store, private collectionService: CollectionService) {
-    this.collection$ = store.select(selectAllCollections); // Data from ngRx store
-    this.points$ = new BehaviorSubject<number>(0); 
+  constructor(private store: Store, private collectionService: CollectionService, private auth: AuthService) {
+    // Select the collections from the store
+    this.collection$ = store.select(selectAllCollections);
+    this.points$ = new BehaviorSubject<number>(0);
   }
 
   ngOnInit(): void {
+    // Load current user info from localStorage
     const userString = localStorage.getItem('current_user');
     if (userString) {
       const user = JSON.parse(userString);
       this.role = user.role;
-      this.currentUserId = user.id; // Set current user ID
+      this.currentUserId = user.id;
     }
 
-    // Fetch collection data from localStorage only when the component initializes
-    const storeData = JSON.parse(localStorage.getItem('storeData') || '{}');
-    
-    // Load data from localStorage if available
+    // Load collections from localStorage
+    const storeData = this.collectionService.getStoreData();
     if (storeData && storeData.collectionRequests) {
-      this.collectionRequests = storeData.collectionRequests; // Load collection data from localStorage
+      this.collectionRequests = storeData.collectionRequests;
     }
 
-    // Check if points for the current user exist in localStorage
-    const userPoints = storeData.userPoints ? storeData.userPoints[this.currentUserId] : 0;
-    this.points$.next(userPoints || 0); // Update points observable with data from localStorage
-
-    // Optionally, dispatch an action to load the data into the store (if you need to update the state)
+    // Optionally, dispatch an action to load these into the store
     if (this.collectionRequests.length > 0) {
       this.store.dispatch(CollectionActions.loadCollectionsFromStorage({ collections: this.collectionRequests }));
-
     }
+
+    // Update points from localStorage
+    const userPoints = storeData.userPoints ? storeData.userPoints[this.currentUserId] : 0;
+    this.points$.next(userPoints || 0);
   }
 
   editCollection(collection: CollectionRequest): void {
@@ -78,6 +76,7 @@ export class HomeComponent implements OnInit {
       alert('Collectors can only edit pending requests.');
       return;
     }
+    // Create a copy of the collection and open the edit modal
     this.collectionToEdit = { ...collection };
     this.editModalVisible = true;
   }
@@ -89,6 +88,7 @@ export class HomeComponent implements OnInit {
 
   submitEdit(): void {
     if (this.collectionToEdit) {
+      // Dispatch an action to update the collection in the store
       this.store.dispatch(CollectionActions.updateCollection({ collection: this.collectionToEdit }));
       this.closeEditModal();
     }
@@ -114,10 +114,18 @@ export class HomeComponent implements OnInit {
 
   submitStatusUpdate(): void {
     if (this.collectionToUpdate) {
+      if (this.collectionToUpdate.status === 'validee') {
+        // Award points when the status changes to 'validee'
+        this.collectionService.addPointsAfterValidation(this.collectionToUpdate);
+        const updatedPoints = this.collectionService.getStoreData().userPoints[this.currentUserId] || 0;
+        this.points$.next(updatedPoints);
+      }
+      // Dispatch update status action, which is now handled by our reducer
       this.store.dispatch(CollectionActions.updateCollectionStatus({ collection: this.collectionToUpdate }));
       this.closeStatusModal();
     }
   }
+  
 
   removeCollection(collectionId: string, collectionStatus: string): void {
     if (this.role === 'collector' && collectionStatus !== 'en attente') {
@@ -130,7 +138,7 @@ export class HomeComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
+    this.auth.logout();
     console.log('logout');
   }
 
@@ -139,22 +147,19 @@ export class HomeComponent implements OnInit {
       alert('Please select a voucher value');
       return;
     }
-
+  
     const points = parseInt(this.selectedVoucher, 10);
-    const voucherValue = this.getVoucherValue(points);
-
-    this.points$.pipe(take(1)).subscribe(currentPoints => {
-      if (currentPoints >= points) {
-        this.store.dispatch(PointsActions.convertPoints({
-          userId: this.currentUserId,
-          points: points,
-          voucherValue: voucherValue
-        }));
-        alert(`Successfully converted ${points} points to a ${voucherValue} Dh voucher!`);
-      } else {
-        alert('Insufficient points for this conversion');
-      }
-    });
+    const currentPoints = this.points$.value;
+  
+    if (currentPoints >= points) {
+      this.collectionService.convertPointsToVoucher(this.currentUserId);
+      const updatedPoints = this.collectionService.getStoreData().userPoints[this.currentUserId] || 0;
+      this.points$.next(updatedPoints);
+      const voucherValue = this.getVoucherValue(points);
+      alert(`Successfully converted ${points} points to a ${voucherValue} Dh voucher!`);
+    } else {
+      alert('Insufficient points for this conversion');
+    }
   }
 
   private getVoucherValue(points: number): number {

@@ -17,19 +17,19 @@ export class CollectionService {
     const storeData = storedData ? JSON.parse(storedData) : {};
     return storeData.collectionRequests || []; // Return collectionRequests if found
   }
-  private getStoreData(): any {
+  public  getStoreData(): any {
     const storedData = localStorage.getItem('storeData');
     return storedData ? JSON.parse(storedData) : { collectionRequests: [], userPoints: {} };
   }
 
 
   // Save the state to localStorage
-  private saveStoreData(data: any): void {
+  public saveStoreData(data: any): void {
     localStorage.setItem('storeData', JSON.stringify(data));
   }
 
   // Calculate points based on the collection
-  calculatePoints(collection: any): number {
+  public calculatePoints(collection: any): number {
     let totalPoints = 0;
     collection.wasteItems.forEach((item: any) => {
       const pointsForItem = this.pointsPerKg[item.type] || 0;
@@ -38,19 +38,21 @@ export class CollectionService {
     return totalPoints;
   }
 
-  // Add points after collection validation
-  addPointsAfterValidation(collection: any): void {
+  // In CollectionService
+  public addPointsAfterValidation(collection: any): void {
     const storeData = this.getStoreData();
-    const userPoints = storeData.userPoints;
-
     const pointsToAdd = this.calculatePoints(collection);
 
-    // Find the user and update points or add a new user if not found
-    const user = userPoints.find((user: any) => user.userId === collection.userId);
-    if (user) {
-      user.points += pointsToAdd;
+    // Initialize userPoints if it doesn't exist
+    if (!storeData.userPoints) {
+      storeData.userPoints = {};
+    }
+
+    // Add points to user's existing points or initialize with new points
+    if (storeData.userPoints[collection.userId]) {
+      storeData.userPoints[collection.userId] += pointsToAdd;
     } else {
-      userPoints.push({ userId: collection.userId, points: pointsToAdd });
+      storeData.userPoints[collection.userId] = pointsToAdd;
     }
 
     // Save the updated state back to localStorage
@@ -58,7 +60,7 @@ export class CollectionService {
   }
 
   // Convert points to a voucher
-  convertPointsToVoucher(userId: string): void {
+  public convertPointsToVoucher(userId: string): void {
     const storeData = this.getStoreData();
     const user = storeData.userPoints.find((user: any) => user.userId === userId);
 

@@ -74,34 +74,20 @@
       <div class="md:col-span-8 space-y-6">
         <!-- <div *ngIf="role==='collecteur'" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"> -->
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          <div class="p-6 bg-primary-50 rounded-xl hover:scale-105 transition">
-            <div class="flex items-center justify-between">
-              <span class="material-symbols-outlined text-3xl text-primary-600"
-                >inventory_2</span
-              >
-              <span class="text-2xl font-bold text-primary-600">152kg</span>
-            </div>
-            <p class="mt-2 text-primary-600">Total Recycled</p>
+         
+          <div class="points-section bg-white rounded-xl border p-6 mb-6">
+            <h3 class="text-lg font-bold mb-4">Your Points Balance</h3>
+            <p class="text-2xl font-bold text-primary-600">{{ points$ | async }} points</p>
           </div>
-          <div class="p-6 bg-primary-50 rounded-xl hover:scale-105 transition">
-            
-            <div class="flex items-center justify-between">
-              <span class="material-symbols-outlined text-3xl text-primary-600"
-                >stars</span
-              >
-              <span class="text-2xl font-bold text-primary-600">324</span>
-            </div>
-            <p  class="mt-2 text-primary-600">Points Earned</p>
+          <div class="points-section bg-white rounded-xl border p-6 mb-6">
+            <h3 class="text-lg font-bold mb-4">Your Points Balance</h3>
+            <p class="text-2xl font-bold text-primary-600">{{ points$ | async }} points</p>
           </div>
-          <div class="p-6 bg-primary-50 rounded-xl hover:scale-105 transition">
-            <div class="flex items-center justify-between">
-              <span class="material-symbols-outlined text-3xl text-primary-600"
-                >local_activity</span
-              >
-              <span class="text-2xl font-bold text-primary-600">2</span>
-            </div>
-            <p class="mt-2 text-primary-600">Active Collections</p>
+          <div class="points-section bg-white rounded-xl border p-6 mb-6">
+            <h3 class="text-lg font-bold mb-4">Your Points Balance</h3>
+            <p class="text-2xl font-bold text-primary-600">{{ points$ | async }} points</p>
           </div>
+          
         </div>
         <router-outlet></router-outlet>
         
@@ -132,7 +118,7 @@
               </div>
             </div>
           </div> -->
-          
+
           <div *ngFor="let collection of collectionRequests">
   <div class="collection-item">
     <h4>Collection ID: {{ collection.id }}</h4>
@@ -152,67 +138,66 @@
   <hr />
 </div>
 
-<!-- Display points -->
-<div class="user-points">
-  <h4>User Points: {{ points$ | async }} </h4>
-</div>
 
+<div id="webcrumbs">
+    <div class="w-full max-w-[1200px] bg-white mx-auto">
+      <!-- Navigation omitted for brevity -->
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6">
+        <div class="md:col-span-8 space-y-6">
           <div class="bg-white rounded-xl border p-6">
             <h2 class="text-lg font-bold mb-4">Collections</h2>
-            <div class="space-y-4">
-              <div
-                *ngFor="let collection of collection$ | async"
-                class="flex items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition"
-              >
+            <div class="space-y-4" *ngIf="collection$ | async as collections">
+              <div *ngFor="let collection of collections" class="flex items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition">
                 <div class="flex items-center gap-4">
-                  <span class="material-symbols-outlined p-2 bg-primary-100 text-primary-600 rounded-lg">
-                    recycling
-                  </span>
+                  <span class="material-symbols-outlined p-2 bg-primary-100 text-primary-600 rounded-lg">recycling</span>
                   <div>
-                    <p class="font-medium">Collection</p>
-                    <p class="text-sm text-neutral-600">
-                      {{ collection.totalWeight }}kg - {{ collection.collectionDate| titlecase }}
-                    </p>
+                    <p class="font-medium">Collection ID: {{ collection.id }}</p>
+                    <p class="text-sm text-neutral-600">{{ collection.totalWeight }}kg - {{ collection.status | titlecase }}</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
-                  <span class="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">
-                    {{ collection.status | titlecase }}
-                  </span>
-                  <!-- <div *ngIf="role === 'individuel' || (role === 'collecteur' && collection.status === 'en attente')" class="flex gap-2"> -->
-                  <div  class="flex gap-2">
-                    <button
-                      class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm"
-                      (click)="editCollection(collection)"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm"
-                      (click)="removeCollection(collection.id, collection.status)"
-                    >
-                      Remove
-                    </button>
+                  <span class="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">{{ collection.status | titlecase }}</span>
+                  <div class="flex gap-2">
+                    <button class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm" (click)="editCollection(collection)">Edit</button>
+                    <button class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm" (click)="removeCollection(collection.id, collection.status)">Remove</button>
+                    <div *ngIf="role === 'collector' && ['occupee','en attente','en cours'].includes(collection.status.trim().toLowerCase())" class="flex gap-2">
+                      <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm" (click)="updateStatus(collection)">Update Status</button>
+                    </div>
                   </div>
-                    <!-- <pre>{{ collection.status | json }}</pre> -->
-
-                    <div *ngIf=" role === 'collector' && ['occupee', 'en attente', 'en cours'].includes(collection.status.trim().toLowerCase())" class="flex gap-2">
-                        <!-- hello world -->
-                        {{role}}
-                    <div  class="flex gap-2">
-                        <!-- Hellow 2 -->
-                        <button
-                        class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
-                        (click)="updateStatus(collection)"
-                        >
-                        Update Status
-                        </button>
-                    </div>
-                    </div>
-
+                </div>
               </div>
             </div>
           </div>
+    
+          <!-- Modals for editing/updating -->
+          <!-- Edit Modal and Update Status Modal code goes here -->
+    
+          <!-- Points Section -->
+          <div *ngIf="points$ | async as points" class="points-section">
+            <h3>Your Current Points: {{ points }}</h3>
+          </div>
+    
+          <!-- Points Conversion Section (for particuliers) -->
+          <div class="conversion-section" *ngIf="role === 'particulier'">
+            <h3>Convert Points to Vouchers</h3>
+            <select [(ngModel)]="selectedVoucher" class="form-control">
+              <option value="">Select a voucher</option>
+              <option value="100">100 points = 50 Dh voucher</option>
+              <option value="200">200 points = 120 Dh voucher</option>
+              <option value="500">500 points = 350 Dh voucher</option>
+            </select>
+            <button (click)="convertPoints()" class="btn btn-convert" [disabled]="!selectedVoucher">Convert Points</button>
+          </div>
+        </div>
+        <!-- Sidebar / Quick Actions -->
+        <div class="md:col-span-4 space-y-6">
+          <!-- Sidebar content goes here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
   
           <!-- Edit Collection Modal -->
           <div *ngIf="editModalVisible && collectionToEdit" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
@@ -305,25 +290,7 @@
               
             </div>
           </div>
-         <!-- Add this section to display user's points -->
-<div *ngIf="points$ | async as points" class="points-section">
-    <h3>Your Current Points: {{ points }}</h3>
-  </div>
-  
-  <!-- Add this section for points conversion -->
-  <div class="conversion-section" *ngIf="role === 'particulier'">
-    <h3>Convert Points to Vouchers</h3>
-    <select [(ngModel)]="selectedVoucher" class="form-control">
-      <option value="">Select a voucher</option>
-      <option value="100">100 points = 50 Dh voucher</option>
-      <option value="200">200 points = 120 Dh voucher</option>
-      <option value="500">500 points = 350 Dh voucher</option>
-    </select>
-    <button (click)="convertPoints()" class="btn btn-convert" [disabled]="!selectedVoucher">
-      Convert Points
-    </button>
-  </div>
-  
+
           
           <div *ngIf="updateStatusModalVisible && collectionToUpdate" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
             <div class="bg-white rounded-lg p-6 w-full max-w-lg">
@@ -361,20 +328,26 @@
       </div>
       <div class="md:col-span-4 space-y-6">
         <!-- <div *ngIf="role==='collecteur'" class="bg-white rounded-xl border p-6"> -->
-        <div class="bg-white rounded-xl border p-6">
-          <h2 class="text-lg font-bold mb-4">Points Conversion</h2>
-          <div class="space-y-3">
-            <button
-              class="w-full p-4 border rounded-lg hover:bg-neutral-50 transition flex items-center justify-between"
-            >
-              <div>
-                <p class="font-medium">50 Dh Voucher</p>
-                <p class="text-sm text-neutral-600">100 points required</p>
-              </div>
-              <span class="material-symbols-outlined">redeem</span>
-            </button>
-          </div>
-        </div>
+            <div class="conversion-section bg-white rounded-xl border p-6">
+                <!-- <div class="conversion-section bg-white rounded-xl border p-6" *ngIf="role === 'particulier'"> -->
+                  <h3 class="text-lg font-bold mb-4">Convert Points to Vouchers</h3>
+                  <div class="space-y-4">
+                    <select 
+                      [(ngModel)]="selectedVoucher"
+                      class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:outline-none">
+                      <option value="">Select a voucher</option>
+                      <option value="100">100 points = 50 Dh voucher</option>
+                      <option value="200">200 points = 120 Dh voucher</option>
+                      <option value="500">500 points = 350 Dh voucher</option>
+                    </select>
+                    <button 
+                      (click)="convertPoints()"
+                      [disabled]="!selectedVoucher"
+                      class="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                      Convert Points
+                    </button>
+                  </div>
+                </div>
         <div class="bg-white rounded-xl border p-6">
           <h2 class="text-lg font-bold mb-4">Quick Actions</h2>
           <div class="grid grid-cols-2 gap-4">
