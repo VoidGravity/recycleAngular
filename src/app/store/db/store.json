@@ -1,6 +1,27 @@
 {
-    "collectionRequests": [
-       
+    "collections": [
+      {
+        "id": "1",
+        "wasteItems": [
+          { "type": "plastique", "weight": 2 },
+          { "type": "papier", "weight": 1 }
+        ],
+        "status": "validee"
+      },
+      
+      
+      {
+        "id": "2",
+        "wasteItems": [
+          { "type": "metal", "weight": 3 },
+          { "type": "verre", "weight": 1 }
+        ],
+        "status": "en cours"
+      }
+    ],
+    "userPoints": [
+      { "userId": "user1", "points": 150 },
+      { "userId": "user2", "points": 220 }
     ]
-}
+  }
   

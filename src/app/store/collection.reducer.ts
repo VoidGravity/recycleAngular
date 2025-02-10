@@ -1,49 +1,36 @@
 import { createReducer, on } from '@ngrx/store';
 import { CollectionActions } from './collection.actions';
 import { CollectionRequest } from '../model/collection-request.model';
-import storeData from './db/store.json';
-
-export const collectionFeatureKey = 'collection';
 
 export interface State {
-  // collections: CollectionRequest[]; 
   collectionRequests: CollectionRequest[];
-
-
 }
 
-export const initialState: State = {
-  // collections: []
-  collectionRequests: storeData.collectionRequests
-
+const initialState: State = {
+  collectionRequests: JSON.parse(localStorage.getItem('collections') || '[]'),
 };
 
-export const reducer = createReducer(
+export const collectionReducer = createReducer(
   initialState,
-  on(CollectionActions.createCollection, (state, { collection }) => ({
-    ...state,
-    collectionRequests: [...state.collectionRequests, collection]
-  })),
-  on(CollectionActions.updateCollection, (state, { collection }) => ({
-    ...state,
-    collectionRequests: state.collectionRequests.map(req =>
-      req.id === collection.id ? collection : req
-    )
-  })),
-  on(CollectionActions.updateCollectionStatus, (state, { collection }) => ({
-    ...state,
-    collectionRequests: state.collectionRequests.map(req =>
-      req.id === collection.id ? collection : req
-    )
-  })),
-  on(CollectionActions.removeCollection, (state, { collectionid }) => ({
-    ...state,
-    collectionRequests: state.collectionRequests.filter(req => req.id !== collectionid)
-  })),
-  on(CollectionActions.loadCollectionsFromStorage, (state, { collections }) => ({
-    ...state,
-    collectionRequests: collections
-  }))
-
+  on(CollectionActions.createCollection, (state, { collection }) => {
+    const updatedCollections = [...state.collectionRequests, collection];
+    localStorage.setItem('collections', JSON.stringify(updatedCollections));
+    return { ...state, collectionRequests: updatedCollections };
+  }),
+  on(CollectionActions.updateCollection, (state, { collection }) => {
+    const updatedCollections = state.collectionRequests.map((col) =>
+      col.id === collection.id ? collection : col
+    );
+    localStorage.setItem('collections', JSON.stringify(updatedCollections));
+    return { ...state, collectionRequests: updatedCollections };
+  }),
+  on(CollectionActions.removeCollection, (state, { collectionid }) => {
+    const updatedCollections = state.collectionRequests.filter((col) => col.id !== collectionid);
+    localStorage.setItem('collections', JSON.stringify(updatedCollections));
+    return { ...state, collectionRequests: updatedCollections };
+  }),
+  on(CollectionActions.loadCollectionsFromStorage, (state, { collections }) => {
+    localStorage.setItem('collections', JSON.stringify(collections));
+    return { ...state, collectionRequests: collections };
+  })
 );
-

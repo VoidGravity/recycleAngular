@@ -1,0 +1,76 @@
+{
+  "collectionRequests": [
+    {
+      "id": "1",
+      "wasteItems": [
+        {
+          "type": "plastique",
+          "weight": 2
+        },
+        {
+          "type": "papier",
+          "weight": 1
+        }
+      ],
+      "totalWeight": 0,
+      "collectionAddress": "",
+      "collectionDate": "",
+      "collectionTime": "",
+      "additionalNotes": "",
+      "status": "validee"
+    },
+    {
+      "id": "2",
+      "wasteItems": [
+        {
+          "type": "metal",
+          "weight": 3
+        },
+        {
+          "type": "verre",
+          "weight": 1
+        }
+      ],
+      "totalWeight": 0,
+      "collectionAddress": "",
+      "collectionDate": "",
+      "collectionTime": "",
+      "additionalNotes": "",
+      "status": "validee"
+    },
+    {
+      "id": "vozclvs4y",
+      "wasteItems": [
+        {
+          "type": "paper",
+          "weight": 4
+        }
+      ],
+      "totalWeight": 4,
+      "collectionAddress": "Aut atque eos exerci",
+      "collectionDate": "2025-02-10",
+      "collectionTime": "14:52",
+      "additionalNotes": "Illum similique ass",
+      "status": "en attente"
+    },
+    {
+      "id": "2skqr1atz",
+      "wasteItems": [
+        {
+          "type": "paper",
+          "weight": 4
+        }
+      ],
+      "totalWeight": 4,
+      "collectionAddress": "Aut atque eos exerci",
+      "collectionDate": "2025-02-10",
+      "collectionTime": "14:52",
+      "additionalNotes": "Illum similique ass",
+      "status": "en attente"
+    }
+  ],
+  "userPoints": {
+    "user1": 150,
+    "user2": 220
+  }
+}

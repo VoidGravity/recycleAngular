@@ -132,6 +132,31 @@
               </div>
             </div>
           </div> -->
+          
+          <div *ngFor="let collection of collectionRequests">
+  <div class="collection-item">
+    <h4>Collection ID: {{ collection.id }}</h4>
+    <p>Status: {{ collection.status }}</p>
+    <p><strong>Waste Items:</strong></p>
+    <ul>
+      <li *ngFor="let item of collection.wasteItems">
+        Type: {{ item.type }}, Weight: {{ item.weight }}kg
+      </li>
+    </ul>
+    <p><strong>Total Weight:</strong> {{ collection.totalWeight }} kg</p>
+    <p><strong>Collection Address:</strong> {{ collection.collectionAddress }}</p>
+    <p><strong>Collection Date:</strong> {{ collection.collectionDate }}</p>
+    <p><strong>Collection Time:</strong> {{ collection.collectionTime }}</p>
+    <p><strong>Additional Notes:</strong> {{ collection.additionalNotes }}</p>
+  </div>
+  <hr />
+</div>
+
+<!-- Display points -->
+<div class="user-points">
+  <h4>User Points: {{ points$ | async }} </h4>
+</div>
+
           <div class="bg-white rounded-xl border p-6">
             <h2 class="text-lg font-bold mb-4">Collections</h2>
             <div class="space-y-4">
@@ -280,8 +305,26 @@
               
             </div>
           </div>
+         <!-- Add this section to display user's points -->
+<div *ngIf="points$ | async as points" class="points-section">
+    <h3>Your Current Points: {{ points }}</h3>
+  </div>
   
-          <!-- Update Status Modal (Collector Only) -->
+  <!-- Add this section for points conversion -->
+  <div class="conversion-section" *ngIf="role === 'particulier'">
+    <h3>Convert Points to Vouchers</h3>
+    <select [(ngModel)]="selectedVoucher" class="form-control">
+      <option value="">Select a voucher</option>
+      <option value="100">100 points = 50 Dh voucher</option>
+      <option value="200">200 points = 120 Dh voucher</option>
+      <option value="500">500 points = 350 Dh voucher</option>
+    </select>
+    <button (click)="convertPoints()" class="btn btn-convert" [disabled]="!selectedVoucher">
+      Convert Points
+    </button>
+  </div>
+  
+          
           <div *ngIf="updateStatusModalVisible && collectionToUpdate" class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
             <div class="bg-white rounded-lg p-6 w-full max-w-lg">
               <h3 class="text-lg font-bold mb-4">Update Collection Status</h3>
@@ -342,6 +385,7 @@
               <p routerLink="/home/collection" class="text-sm">New Request</p>
               
             </button>
+            
             <button
               class="p-4 border rounded-lg hover:bg-neutral-50 transition text-center"
             >
