@@ -53,11 +53,13 @@ export class HomeComponent implements OnInit {
       this.currentUserId = user.id;
       this.userAddress = user.address; 
     }
-  
-    this.collection$ = this.store.select(selectAllCollections).pipe(
-      map((collections: CollectionRequest[]) => collections.filter(c => c.collectionAddress === this.userAddress))
-    );
-  
+    if(this.role==='collector'){
+
+      this.collection$ = this.store.select(selectAllCollections).pipe(
+        map((collections: CollectionRequest[]) => collections.filter(c => c.collectionAddress === this.userAddress))
+      );
+    }
+      
     const storeData = this.collectionService.getStoreData();
     const userPoints = storeData.userPoints ? storeData.userPoints[this.currentUserId] : 0;
     this.points$.next(userPoints || 0);

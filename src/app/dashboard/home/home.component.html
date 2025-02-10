@@ -41,8 +41,8 @@
     </nav>
     <div  class="grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6">
       <div class="md:col-span-8 space-y-6">
-        <!-- <div *ngIf="role==='collecteur'" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"> -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div *ngIf="role==='individuel'" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <!-- <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"> -->
          
           <div class="points-section bg-white rounded-xl border p-6 mb-6">
             <h3 class="text-lg font-bold mb-4">Your Points Balance</h3>
@@ -155,6 +155,7 @@
                             Remove
                           </button>
                           <button *ngIf="role==='collector' && ['occupee','en attente','en cours'].includes(collection.status.trim().toLowerCase())"
+
                                   class="flex items-center gap-1 px-4 py-2 bg-blue-100 text-blue-600 rounded-lg text-sm hover:bg-blue-200 transition"
                                   (click)="updateStatus(collection)">
                             <span class="material-symbols-outlined text-sm">update</span>
@@ -302,8 +303,8 @@
           
       </div>
       <div class="md:col-span-4 space-y-6">
-        <!-- <div *ngIf="role==='collecteur'" class="bg-white rounded-xl border p-6"> -->
-            <div class="conversion-section bg-white rounded-xl border p-6">
+        <div *ngIf="role==='individuel'" class="bg-white rounded-xl border p-6">
+            <!-- <div  class="conversion-section bg-white rounded-xl border p-6"> -->
                 <!-- <div class="conversion-section bg-white rounded-xl border p-6" *ngIf="role === 'particulier'"> -->
                   <h3 class="text-lg font-bold mb-4">Convert Points to Vouchers</h3>
                   <div class="space-y-4">
@@ -326,7 +327,7 @@
         <div class="bg-white rounded-xl border p-6">
           <h2 class="text-lg font-bold mb-4">Quick Actions</h2>
           <div class="grid grid-cols-2 gap-4">
-            <button
+            <button *ngIf="role === 'individuel'"
               class="p-4 border rounded-lg hover:bg-neutral-50 transition text-center"
             >
               <span class="material-symbols-outlined mb-2">add_circle</span>
