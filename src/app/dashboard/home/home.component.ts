@@ -9,7 +9,7 @@ import { CommonModule } from '@angular/common';
 import { CollectionActions } from '../../store/collection.actions';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { take } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { PointsActions } from '../../store/points.actions';
 import { CollectionService } from '../../services/collection.service';
 import { cloneDeep } from 'lodash'; // if using lodash
@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit {
   updateStatusModalVisible: boolean = false;
   collectionToUpdate: CollectionRequest | null = null;
   convertedAmount: number = 0;
+  userAddress: string = ''; 
 
   points$: BehaviorSubject<number>;
   selectedVoucher: string = '';
@@ -45,26 +46,46 @@ export class HomeComponent implements OnInit {
     this.points$ = new BehaviorSubject<number>(0);
   }
 
+  // ngOnInit(): void {
+  //   const userString = localStorage.getItem('current_user');
+  //   if (userString) {
+  //     const user = JSON.parse(userString);
+  //     this.role = user.role;
+  //     this.currentUserId = user.id;
+  //   }
+
+  //   // Load collections from localStorage
+  //   const storedCollections: CollectionRequest[] = JSON.parse(localStorage.getItem('collections') || '[]');
+  //   if (storedCollections.length > 0) {
+  //     // Dispatch action to load these into the store
+  //     this.store.dispatch(CollectionActions.loadCollectionsFromStorage({ collections: storedCollections }));
+  //   }
+
+  //   // Also update points from localStorage using your service
+  //   const storeData = this.collectionService.getStoreData();
+  //   const userPoints = storeData.userPoints ? storeData.userPoints[this.currentUserId] : 0;
+  //   this.points$.next(userPoints || 0);
+  // }
   ngOnInit(): void {
     const userString = localStorage.getItem('current_user');
     if (userString) {
       const user = JSON.parse(userString);
       this.role = user.role;
       this.currentUserId = user.id;
+      this.userAddress = user.address; // Assuming 'address' is stored in user data
     }
-
-    // Load collections from localStorage
-    const storedCollections: CollectionRequest[] = JSON.parse(localStorage.getItem('collections') || '[]');
-    if (storedCollections.length > 0) {
-      // Dispatch action to load these into the store
-      this.store.dispatch(CollectionActions.loadCollectionsFromStorage({ collections: storedCollections }));
-    }
-
-    // Also update points from localStorage using your service
+  
+    // Select collections from the store and filter by user's address
+    this.collection$ = this.store.select(selectAllCollections).pipe(
+      map((collections: CollectionRequest[]) => collections.filter(c => c.collectionAddress === this.userAddress))
+    );
+  
+    // Update points from localStorage
     const storeData = this.collectionService.getStoreData();
     const userPoints = storeData.userPoints ? storeData.userPoints[this.currentUserId] : 0;
     this.points$.next(userPoints || 0);
   }
+  
 
   editCollection(collection: CollectionRequest): void {
     if (this.role === 'collector' && collection.status !== 'en attente') {
