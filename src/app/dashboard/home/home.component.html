@@ -8,38 +8,7 @@
         <h1 class="text-xl font-bold">RecycleHub</h1>
       </div>
       <div class="flex items-center gap-6">
-        <div class="relative">
-          <details class="group">
-            <summary class="flex items-center gap-2 cursor-pointer">
-              <span class="material-symbols-outlined">notifications</span>
-              <div
-                class="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full text-white text-xs flex items-center justify-center"
-              >
-                3
-              </div>
-            </summary>
-            <div
-              class="absolute right-0 mt-2 w-[280px] md:w-80 bg-white rounded-lg shadow-xl border p-4 z-50"
-            >
-              <div class="flex flex-col gap-4">
-                <div
-                  class="flex items-start gap-3 p-2 hover:bg-neutral-50 rounded-lg transition"
-                >
-                  <span class="material-symbols-outlined mt-1"
-                    >local_shipping</span
-                  >
-                  <div>
-                    <p class="font-medium">New Collection Request</p>
-                    <p class="text-sm text-neutral-600">
-                      1000kg of plastic for collection
-                    </p>
-                    <p class="text-xs text-neutral-400">2 minutes ago</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </details>
-        </div>
+        
         <details class="relative group">
           <summary class="flex items-center gap-2 cursor-pointer">
             <div
@@ -95,7 +64,7 @@
     <p><strong>Waste Items:</strong></p>
     <ul>
       <li *ngFor="let item of collection.wasteItems">
-        Type: {{ item.type }}, Weight: {{ item.weight }}kg
+       Type: {{ item.type }}, Weight: {{ item.weight }}kg
       </li>
     </ul>
     <p><strong>Total Weight:</strong> {{ collection.totalWeight }} kg</p>
@@ -115,57 +84,88 @@
         
         <div class="md:col-span-8 space-y-6">
           
-          <div class="bg-white rounded-xl border p-6 shadow-sm">
-            <h2 class="text-lg font-bold mb-4">Collections</h2>
-            <div *ngIf="collection$ | async as collections">
-              <div class="grid grid-cols-1 gap-4">
-                <div *ngFor="let collection of collections" class="flex flex-col md:flex-row items-start justify-between p-4 border rounded-lg hover:bg-neutral-50 transition">
-                  
-                  <div class="flex flex-col space-y-2">
-                    <p class="font-medium text-base">ID: <span class="font-bold">{{ collection.id }}</span></p>
-                    <p class="text-sm text-gray-600">Total Weight: {{ collection.totalWeight }}kg</p>
-                    <p class="text-sm text-gray-600">
-                      Status: <span class="font-semibold">{{ collection.status | titlecase }}</span>
-                    </p>
-                    <p class="text-sm text-gray-600" *ngIf="collection.collectionAddress">
-                      Address: {{ collection.collectionAddress }}
-                    </p>
-                    <p class="text-sm text-gray-600" *ngIf="collection.collectionDate && collection.collectionTime">
-                      Date: {{ collection.collectionDate }} at {{ collection.collectionTime }}
-                    </p>
-                    <p class="text-sm text-gray-600" *ngIf="collection.additionalNotes">
-                      Notes: {{ collection.additionalNotes }}
-                    </p>
-                    <div *ngIf="collection.wasteItems?.length" class="text-sm text-gray-600">
-                      <p class="font-semibold">Waste Items:</p>
-                      <ul class="list-disc list-inside">
-                        <li *ngFor="let item of collection.wasteItems">
-                          {{ item.type | titlecase }} - {{ item.weight }}kg
-                        </li>
-                      </ul>
+            <div class="bg-white rounded-xl border p-6 shadow-sm">
+                <h2 class="text-lg font-bold mb-4">Collections</h2>
+                <div *ngIf="collection$ | async as collections">
+                  <div class="grid grid-cols-1 gap-4">
+                    <div *ngFor="let collection of collections" 
+                         class="bg-white border rounded-lg hover:bg-neutral-50 transition overflow-hidden">
+                      <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                          <div class="flex items-center gap-2">
+                            <span class="material-symbols-outlined text-neutral-500">inventory_2</span>
+                            <h3 class="font-bold">Collection #{{ collection.id }}</h3>
+                          </div>
+                          <span class="px-3 py-1 rounded-full text-sm font-medium"
+                                [ngClass]="{
+                                  'bg-yellow-100 text-yellow-600': collection.status === 'en attente',
+                                  'bg-blue-100 text-blue-600': collection.status === 'en cours',
+                                  'bg-green-100 text-green-600': collection.status === 'validee',
+                                  'bg-red-100 text-red-600': collection.status === 'rejetee',
+                                  'bg-purple-100 text-purple-600': collection.status === 'occupee'
+                                }">
+                            {{ collection.status | titlecase }}
+                          </span>
+                        </div>
+              
+                        <div class="grid md:grid-cols-2 gap-6">
+                          <div class="space-y-3">
+                            <div class="flex items-center gap-2 text-sm text-gray-600">
+                              <span class="material-symbols-outlined text-neutral-500">scale</span>
+                              <span>Total Weight: <strong>{{ collection.totalWeight }}kg</strong></span>
+                            </div>
+                            <div class="flex items-start gap-2 text-sm text-gray-600" *ngIf="collection.collectionAddress">
+                              <span class="material-symbols-outlined text-neutral-500">location_on</span>
+                              <span>{{ collection.collectionAddress }}</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-gray-600" *ngIf="collection.collectionDate && collection.collectionTime">
+                              <span class="material-symbols-outlined text-neutral-500">calendar_today</span>
+                              <span>{{ collection.collectionDate }} at {{ collection.collectionTime }}</span>
+                            </div>
+                          </div>
+              
+                          <div *ngIf="collection.wasteItems?.length" class="space-y-2">
+                            <h4 class="font-semibold text-sm text-gray-600">Waste Items:</h4>
+                            <div class="grid gap-2">
+                              <div *ngFor="let item of collection.wasteItems" 
+                                   class="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-sm">
+                                <span class="capitalize">{{ item.type }}</span>
+                                <span class="font-medium">{{ item.weight }}kg</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+              
+                        <div *ngIf="collection.additionalNotes" class="mt-4 p-3 bg-gray-50 rounded-lg">
+                          <p class="text-sm text-gray-600">
+                            <span class="material-symbols-outlined text-neutral-500 mr-2 align-middle">notes</span>
+                            {{ collection.additionalNotes }}
+                          </p>
+                        </div>
+              
+                        <div class="flex gap-2 mt-6">
+                          <button class="flex items-center gap-1 px-4 py-2 bg-green-100 text-green-600 rounded-lg text-sm hover:bg-green-200 transition" 
+                                  (click)="editCollection(collection)">
+                            <span class="material-symbols-outlined text-sm">edit</span>
+                            Edit
+                          </button>
+                          <button class="flex items-center gap-1 px-4 py-2 bg-red-100 text-red-600 rounded-lg text-sm hover:bg-red-200 transition"
+                                  (click)="removeCollection(collection.id, collection.status)">
+                            <span class="material-symbols-outlined text-sm">delete</span>
+                            Remove
+                          </button>
+                          <button *ngIf="role==='collector' && ['occupee','en attente','en cours'].includes(collection.status.trim().toLowerCase())"
+                                  class="flex items-center gap-1 px-4 py-2 bg-blue-100 text-blue-600 rounded-lg text-sm hover:bg-blue-200 transition"
+                                  (click)="updateStatus(collection)">
+                            <span class="material-symbols-outlined text-sm">update</span>
+                            Update Status
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div class="flex flex-col space-y-2 mt-4 md:mt-0">
-                    <button class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm" (click)="editCollection(collection)">
-                      Edit
-                    </button>
-                    <button class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm" (click)="removeCollection(collection.id, collection.status)">
-                      Remove
-                    </button>
-                    <button *ngIf="role==='collector' && ['occupee','en attente','en cours'].includes(collection.status.trim().toLowerCase())"
-                            class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
-                            (click)="updateStatus(collection)">
-                      Update Status
-                    </button>
-                  </div>
-                  
                 </div>
               </div>
-            </div>
-          </div>
-    
-          
           
           
         </div>
@@ -287,6 +287,7 @@
                     <option value="rejetee">Rejetée</option>
                   </select>
                 </div>
+                <!-- Optionally, include other fields for updating status -->
                 <button type="submit" class="w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600 transition mt-4">
                   Update Status
                 </button>
@@ -337,7 +338,9 @@
               class="p-4 border rounded-lg hover:bg-neutral-50 transition text-center"
             >
               <span class="material-symbols-outlined mb-2">history</span>
-              <p class="text-sm">History</p>
+              <p class="text-sm"> 
+                -comming soon-
+                </p>
             </button>
           </div>
         </div>
