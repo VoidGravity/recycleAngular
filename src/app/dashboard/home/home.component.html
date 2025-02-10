@@ -79,13 +79,9 @@
             <h3 class="text-lg font-bold mb-4">Your Points Balance</h3>
             <p class="text-2xl font-bold text-primary-600">{{ points$ | async }} points</p>
           </div>
-          <div class="points-section bg-white rounded-xl border p-6 mb-6">
-            <h3 class="text-lg font-bold mb-4">Your Points Balance</h3>
-            <p class="text-2xl font-bold text-primary-600">{{ points$ | async }} points</p>
-          </div>
-          <div class="points-section bg-white rounded-xl border p-6 mb-6">
-            <h3 class="text-lg font-bold mb-4">Your Points Balance</h3>
-            <p class="text-2xl font-bold text-primary-600">{{ points$ | async }} points</p>
+          <div *ngIf="convertedAmount !== null" class="bg-white rounded-xl border p-6 shadow-sm">
+            <h3 class="text-lg font-bold mb-4">Converted Amount</h3>
+            <p class="text-2xl font-bold text-green-600">{{ convertedAmount }} Dh</p>
           </div>
           
         </div>
@@ -139,60 +135,109 @@
 </div>
 
 
-<div id="webcrumbs">
-    <div class="w-full max-w-[1200px] bg-white mx-auto">
-      <!-- Navigation omitted for brevity -->
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-4 md:p-6">
+<div id="webcrumbs" class="py-4">
+    <div class="w-full max-w-[1200px] mx-auto">
+      <!-- Navigation (omitted for brevity) -->
+      
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 p-4">
+        
+        <!-- Main Content -->
         <div class="md:col-span-8 space-y-6">
-          <div class="bg-white rounded-xl border p-6">
+          
+          <!-- Collections Card -->
+          <div class="bg-white rounded-xl border p-6 shadow-sm">
             <h2 class="text-lg font-bold mb-4">Collections</h2>
-            <div class="space-y-4" *ngIf="collection$ | async as collections">
-              <div *ngFor="let collection of collections" class="flex items-center justify-between p-4 border rounded-lg hover:bg-neutral-50 transition">
-                <div class="flex items-center gap-4">
-                  <span class="material-symbols-outlined p-2 bg-primary-100 text-primary-600 rounded-lg">recycling</span>
-                  <div>
-                    <p class="font-medium">Collection ID: {{ collection.id }}</p>
-                    <p class="text-sm text-neutral-600">{{ collection.totalWeight }}kg - {{ collection.status | titlecase }}</p>
-                  </div>
-                </div>
-                <div class="flex items-center gap-4">
-                  <span class="px-3 py-1 bg-primary-100 text-primary-600 rounded-full text-sm">{{ collection.status | titlecase }}</span>
-                  <div class="flex gap-2">
-                    <button class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm" (click)="editCollection(collection)">Edit</button>
-                    <button class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm" (click)="removeCollection(collection.id, collection.status)">Remove</button>
-                    <div *ngIf="role === 'collector' && ['occupee','en attente','en cours'].includes(collection.status.trim().toLowerCase())" class="flex gap-2">
-                      <button class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm" (click)="updateStatus(collection)">Update Status</button>
+            <div *ngIf="collection$ | async as collections">
+              <div class="grid grid-cols-1 gap-4">
+                <div *ngFor="let collection of collections" class="flex flex-col md:flex-row items-start justify-between p-4 border rounded-lg hover:bg-neutral-50 transition">
+                  
+                  <!-- Collection Details -->
+                  <div class="flex flex-col space-y-2">
+                    <p class="font-medium text-base">ID: <span class="font-bold">{{ collection.id }}</span></p>
+                    <p class="text-sm text-gray-600">Total Weight: {{ collection.totalWeight }}kg</p>
+                    <p class="text-sm text-gray-600">
+                      Status: <span class="font-semibold">{{ collection.status | titlecase }}</span>
+                    </p>
+                    <p class="text-sm text-gray-600" *ngIf="collection.collectionAddress">
+                      Address: {{ collection.collectionAddress }}
+                    </p>
+                    <p class="text-sm text-gray-600" *ngIf="collection.collectionDate && collection.collectionTime">
+                      Date: {{ collection.collectionDate }} at {{ collection.collectionTime }}
+                    </p>
+                    <p class="text-sm text-gray-600" *ngIf="collection.additionalNotes">
+                      Notes: {{ collection.additionalNotes }}
+                    </p>
+                    <div *ngIf="collection.wasteItems?.length" class="text-sm text-gray-600">
+                      <p class="font-semibold">Waste Items:</p>
+                      <ul class="list-disc list-inside">
+                        <li *ngFor="let item of collection.wasteItems">
+                          {{ item.type | titlecase }} - {{ item.weight }}kg
+                        </li>
+                      </ul>
                     </div>
                   </div>
+                  
+                  <!-- Action Buttons -->
+                  <div class="flex flex-col space-y-2 mt-4 md:mt-0">
+                    <button class="px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm" (click)="editCollection(collection)">
+                      Edit
+                    </button>
+                    <button class="px-3 py-1 bg-red-100 text-red-600 rounded-full text-sm" (click)="removeCollection(collection.id, collection.status)">
+                      Remove
+                    </button>
+                    <button *ngIf="role==='collector' && ['occupee','en attente','en cours'].includes(collection.status.trim().toLowerCase())"
+                            class="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
+                            (click)="updateStatus(collection)">
+                      Update Status
+                    </button>
+                  </div>
+                  
                 </div>
               </div>
             </div>
           </div>
     
-          <!-- Modals for editing/updating -->
-          <!-- Edit Modal and Update Status Modal code goes here -->
-    
           <!-- Points Section -->
-          <div *ngIf="points$ | async as points" class="points-section">
-            <h3>Your Current Points: {{ points }}</h3>
+          <div *ngIf="points$ | async as points" class="bg-white rounded-xl border p-6 shadow-sm">
+            <h3 class="text-lg font-bold mb-4">Your Current Points</h3>
+            <p class="text-2xl font-bold text-primary-600">{{ points }} points</p>
           </div>
     
           <!-- Points Conversion Section (for particuliers) -->
-          <div class="conversion-section" *ngIf="role === 'particulier'">
-            <h3>Convert Points to Vouchers</h3>
-            <select [(ngModel)]="selectedVoucher" class="form-control">
+          <div class="bg-white rounded-xl border p-6 shadow-sm">
+            <h3 class="text-lg font-bold mb-4">Convert Points to Vouchers</h3>
+            <select [(ngModel)]="selectedVoucher" class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-primary-500">
               <option value="">Select a voucher</option>
               <option value="100">100 points = 50 Dh voucher</option>
               <option value="200">200 points = 120 Dh voucher</option>
               <option value="500">500 points = 350 Dh voucher</option>
             </select>
-            <button (click)="convertPoints()" class="btn btn-convert" [disabled]="!selectedVoucher">Convert Points</button>
+            <button (click)="convertPoints()" 
+                    class="mt-4 w-full bg-primary-500 text-white py-2 rounded-lg hover:bg-primary-600"
+                    [disabled]="!selectedVoucher">
+              Convert Points
+            </button>
           </div>
+          
         </div>
+        
         <!-- Sidebar / Quick Actions -->
         <div class="md:col-span-4 space-y-6">
-          <!-- Sidebar content goes here -->
+          <div class="bg-white rounded-xl border p-6 shadow-sm">
+            <h2 class="text-lg font-bold mb-4">Quick Actions</h2>
+            <div class="grid grid-cols-2 gap-4">
+              <button class="p-4 border rounded-lg hover:bg-neutral-50 transition text-center" title="New Request">
+                <span class="material-symbols-outlined mb-2">add_circle</span>
+                <p routerLink="/home/collection" class="text-sm">New Request</p>
+              </button>
+              <button class="p-4 border rounded-lg hover:bg-neutral-50 transition text-center" title="History">
+                <span class="material-symbols-outlined mb-2">history</span>
+                <p class="text-sm">History</p>
+              </button>
+            </div>
+          </div>
         </div>
+        
       </div>
     </div>
   </div>

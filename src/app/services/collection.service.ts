@@ -62,16 +62,10 @@ export class CollectionService {
   // Convert points to a voucher
   public convertPointsToVoucher(userId: string): void {
     const storeData = this.getStoreData();
-    const user = storeData.userPoints.find((user: any) => user.userId === userId);
-
-    if (!user) {
-      console.log('User not found');
-      return;
-    }
-
-    const points = user.points;
+    // Access the points directly since userPoints is an object mapping user IDs to points.
+    const points = storeData.userPoints[userId] || 0;
     let voucherValue = 0;
-
+  
     if (points >= 500) {
       voucherValue = 350;
     } else if (points >= 200) {
@@ -79,14 +73,22 @@ export class CollectionService {
     } else if (points >= 100) {
       voucherValue = 50;
     }
-
+  
     if (voucherValue > 0) {
       console.log(`You have converted ${points} points into a voucher worth ${voucherValue} Dh.`);
-      user.points -= (points >= 500 ? 500 : points >= 200 ? 200 : 100);  // Deduct points after conversion
+      // Deduct points based on the conversion scheme:
+      if (points >= 500) {
+        storeData.userPoints[userId] -= 500;
+      } else if (points >= 200) {
+        storeData.userPoints[userId] -= 200;
+      } else if (points >= 100) {
+        storeData.userPoints[userId] -= 100;
+      }
       this.saveStoreData(storeData);
     } else {
       console.log('Not enough points to convert into a voucher.');
     }
   }
+  
 
 }

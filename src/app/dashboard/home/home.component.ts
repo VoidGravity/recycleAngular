@@ -1,3 +1,4 @@
+
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -11,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 import { take } from 'rxjs/operators';
 import { PointsActions } from '../../store/points.actions';
 import { CollectionService } from '../../services/collection.service';
+import { cloneDeep } from 'lodash'; // if using lodash
 
 @Component({
   selector: 'app-home',
@@ -21,33 +23,29 @@ import { CollectionService } from '../../services/collection.service';
   encapsulation: ViewEncapsulation.None
 })
 export class HomeComponent implements OnInit {
-  // Use the store observable for collections
   collection$: Observable<CollectionRequest[]>;
+  // Remove any duplicate local property if you're using store observable:
+  // But if you want a local copy for initial load:
   collectionRequests: CollectionRequest[] = [];
-
+  
   role: string = '';
   currentUserId: string = '';
-
-  // Modal properties
+  
   editModalVisible: boolean = false;
   collectionToEdit: CollectionRequest | null = null;
   updateStatusModalVisible: boolean = false;
   collectionToUpdate: CollectionRequest | null = null;
+  convertedAmount: number = 0;
 
-  authService = AuthService; // using inject or via constructor injection as desired
-
-  // Points management
   points$: BehaviorSubject<number>;
   selectedVoucher: string = '';
 
   constructor(private store: Store, private collectionService: CollectionService, private auth: AuthService) {
-    // Select the collections from the store
     this.collection$ = store.select(selectAllCollections);
     this.points$ = new BehaviorSubject<number>(0);
   }
 
   ngOnInit(): void {
-    // Load current user info from localStorage
     const userString = localStorage.getItem('current_user');
     if (userString) {
       const user = JSON.parse(userString);
@@ -56,17 +54,14 @@ export class HomeComponent implements OnInit {
     }
 
     // Load collections from localStorage
+    const storedCollections: CollectionRequest[] = JSON.parse(localStorage.getItem('collections') || '[]');
+    if (storedCollections.length > 0) {
+      // Dispatch action to load these into the store
+      this.store.dispatch(CollectionActions.loadCollectionsFromStorage({ collections: storedCollections }));
+    }
+
+    // Also update points from localStorage using your service
     const storeData = this.collectionService.getStoreData();
-    if (storeData && storeData.collectionRequests) {
-      this.collectionRequests = storeData.collectionRequests;
-    }
-
-    // Optionally, dispatch an action to load these into the store
-    if (this.collectionRequests.length > 0) {
-      this.store.dispatch(CollectionActions.loadCollectionsFromStorage({ collections: this.collectionRequests }));
-    }
-
-    // Update points from localStorage
     const userPoints = storeData.userPoints ? storeData.userPoints[this.currentUserId] : 0;
     this.points$.next(userPoints || 0);
   }
@@ -76,8 +71,8 @@ export class HomeComponent implements OnInit {
       alert('Collectors can only edit pending requests.');
       return;
     }
-    // Create a copy of the collection and open the edit modal
-    this.collectionToEdit = { ...collection };
+    // Deep clone the collection so nested objects are mutable
+    this.collectionToEdit = cloneDeep(collection); // or use JSON.parse(JSON.stringify(collection))
     this.editModalVisible = true;
   }
 
@@ -88,7 +83,6 @@ export class HomeComponent implements OnInit {
 
   submitEdit(): void {
     if (this.collectionToEdit) {
-      // Dispatch an action to update the collection in the store
       this.store.dispatch(CollectionActions.updateCollection({ collection: this.collectionToEdit }));
       this.closeEditModal();
     }
@@ -103,7 +97,8 @@ export class HomeComponent implements OnInit {
       alert('This request is validated and cannot be updated.');
       return;
     }
-    this.collectionToUpdate = { ...collection };
+    // Deep clone to allow changes in the nested objects
+    this.collectionToUpdate = cloneDeep(collection);
     this.updateStatusModalVisible = true;
   }
 
@@ -115,17 +110,14 @@ export class HomeComponent implements OnInit {
   submitStatusUpdate(): void {
     if (this.collectionToUpdate) {
       if (this.collectionToUpdate.status === 'validee') {
-        // Award points when the status changes to 'validee'
         this.collectionService.addPointsAfterValidation(this.collectionToUpdate);
         const updatedPoints = this.collectionService.getStoreData().userPoints[this.currentUserId] || 0;
         this.points$.next(updatedPoints);
       }
-      // Dispatch update status action, which is now handled by our reducer
       this.store.dispatch(CollectionActions.updateCollectionStatus({ collection: this.collectionToUpdate }));
       this.closeStatusModal();
     }
   }
-  
 
   removeCollection(collectionId: string, collectionStatus: string): void {
     if (this.role === 'collector' && collectionStatus !== 'en attente') {
@@ -148,17 +140,27 @@ export class HomeComponent implements OnInit {
       return;
     }
   
-    const points = parseInt(this.selectedVoucher, 10);
+    const pointsToDeduct = parseInt(this.selectedVoucher, 10);
     const currentPoints = this.points$.value;
-  
-    if (currentPoints >= points) {
-      this.collectionService.convertPointsToVoucher(this.currentUserId);
-      const updatedPoints = this.collectionService.getStoreData().userPoints[this.currentUserId] || 0;
-      this.points$.next(updatedPoints);
-      const voucherValue = this.getVoucherValue(points);
-      alert(`Successfully converted ${points} points to a ${voucherValue} Dh voucher!`);
+    const voucherValue = this.getVoucherValue(pointsToDeduct);
+
+    if (currentPoints >= pointsToDeduct && voucherValue > 0) {
+      // Deduct points manually
+      const newPoints = currentPoints - pointsToDeduct;
+      this.points$.next(newPoints);
+
+      // Update localStorage for persistence
+      let storeData = this.collectionService.getStoreData();
+      if (!storeData.userPoints) storeData.userPoints = {};
+      storeData.userPoints[this.currentUserId] = newPoints;
+      localStorage.setItem('storeData', JSON.stringify(storeData));
+
+      // Accumulate converted amount instead of replacing
+      this.convertedAmount += voucherValue;
+
+      alert(`Successfully converted ${pointsToDeduct} points to a ${voucherValue} Dh voucher!`);
     } else {
-      alert('Insufficient points for this conversion');
+      alert('Insufficient points for this conversion or invalid voucher.');
     }
   }
 
@@ -167,7 +169,7 @@ export class HomeComponent implements OnInit {
       case 100: return 50;
       case 200: return 120;
       case 500: return 350;
-      default: return 0;
+      default: return 0; // Prevent invalid conversions
     }
   }
 }
